@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+//import "nanopb.proto";
+//option (nanopb_fileopt).packed_struct = true;
+//python generator/nanopb_generator.py ../buzzcam/protobuf/message.proto -I ../buzzcam/protobuf
+//protoc message.proto --python_out=./ -I=./
+/**************/
+
+
+message PacketHeader {
+    uint32 system_uid = 1;
+    uint32 ms_from_start = 2;
+    uint64 epoch = 3;
+    uint32 packet_index = 4;
+    bool request_ack = 5;
+}
+
+message SystemInfoPacket{
+    SimpleSensorReading simple_sensor_reading = 1;
+    bool device_engaged = 2;
+    SDCardState sdcard_state = 3;
+    BatteryState battery_state = 4;
+    optional GPSData gps_data = 5;
+}
+
+message ConfigPacket{
+    bool engage_system = 1;
+    bool enable_microphone = 2;
+    bool enable_activity = 3;
+    bool enable_particulate = 4;
+    bool enable_environmental = 5;
+    bool enable_light = 6;
+    bool enable_motion = 7;
+    bool enable_lora = 8;
+}
+
+message GPSData{
+    float latitude = 1;
+    float longitude = 2;
+    float altitude = 3;
+    float speed = 4;
+    float heading = 5;
+}
+
+message BatteryState{
+    bool charging = 1;
+    float voltage = 2;
+    optional float percentage = 3;
+}
+
+enum Activity {
+  STILL = 0;
+  WALK = 1;
+  RUN = 2;
+}
+
+message SimpleSensorReading{
+    uint32 index = 1;
+    uint32 epoch = 2;
+    float temperature = 3;
+    float humidity = 4;
+    float pressure = 5;
+    float gas = 6;
+    float pm2_5 = 7;
+    uint32 light = 8;
+    Activity activity = 9;
+    uint32 steps = 10;
+
+    bool particulate_static_obstructed = 11;
+    bool particulate_dynamic_obstructed = 12;
+    bool particulate_outside_detection_limits = 13;
+}
+
+message SDCardState{
+    uint32 space_remaining = 1;
+    uint32 total_space = 2;
+}
+
+message AckPacket{
+
+}
+
+message RadioPower{
+    int32 rssi = 1;
+    int32 snr = 2;
+    int32 rssi_est = 3;
+}
+
+
+message Packet {
+    PacketHeader header = 1;
+
+    oneof payload {
+        SystemInfoPacket system_info_packet = 2;
+        ConfigPacket config_packet = 3;
+        AckPacket ack_packet = 4;
+    }
+
+    optional RadioPower radioPower = 5;
+}
