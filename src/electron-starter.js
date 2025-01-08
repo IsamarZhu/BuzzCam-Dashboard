@@ -92,13 +92,12 @@ function createWindow() {
                 filePath = path.join(selectedFolder, `data-${currentDateTime}.csv`);
 
                 const header = [
-                    'timeReceived', 'systemUid', 'msFromStart', 'epoch', 'packetIndex', 'requestAck',
-                    'temperature', 'humidity', 'pressure', 'gas', 'pm2_5', 'light', 'activity', 'steps',
-                    'particulateStaticObstructed', 'particulateDynamicObstructed', 'particulateOutsideDetectionLimits',
-                    'deviceEngaged', 'sdcardSpaceRemaining', 'sdcardTotalSpace',
-                    'batteryCharging', 'batteryVoltage', 'batteryPercentage',
-                    'gpsLatitude', 'gpsLongitude', 'gpsAltitude', 'gpsSpeed', 'gpsHeading',
-                    'radioRssi', 'radioSnr', 'radioRssiEst'
+                    'timeReceived', 'systemUid', 'msFromStart', 'epoch', 'lat', 'lon', 'elev',
+                    'classifier_version', 'epoch_last_detection', 'transmission_interval_m', 'buzz_count_interval', 
+                    'species_1_count_interval', 'species_2_count_interval',
+                    'sdcardSpaceRemaining', 'sdcardTotalSpace', 
+                    'radioRssi', 'radioSnr', 'radioRssiEst',
+                    'batteryVoltage', 'temperature', 'humidity', 'gas',
                 ];
 
                 // Create a new CSV file with the header row

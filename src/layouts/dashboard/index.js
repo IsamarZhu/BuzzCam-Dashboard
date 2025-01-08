@@ -122,7 +122,8 @@ function Dashboard() {
     light: 0,
     activity: 0,
     steps: 0,
-});
+  });
+
   const [selectedChart, setSelectedChart] = useState("temperature");
 
   // Use ref to store the latest temperatureLineChartData
@@ -134,8 +135,6 @@ function Dashboard() {
   const lightDataRef = useRef(lightLineChartData);
   const activityDataRef = useRef(activityLineChartData);
   const stepsDataRef = useRef(stepsLineChartData);
-
-  const memoizedLocations = useMemo(() => lastTenLocations, [lastTenLocations]);
 
 
   // Update ref whenever temperatureLineChartData state changes
@@ -262,14 +261,6 @@ function Dashboard() {
 
 
       });
-
-      
-
-
-
-      // useEffect(() => {
-      //   console.log("Updated temperatureLineChartData: ", temperatureLineChartData);
-      // }, [temperatureLineChartData]);
 
       // Cleanup the event listener when the component unmounts
       return () => {
@@ -494,187 +485,8 @@ function Dashboard() {
                     </VuiBox>
                 </VuiBox>
               </Card>
-              {/* <Card>
-                <VuiBox>
-                <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    HeatMap Overview
-                  </VuiTypography>
-
-                  <VuiBox sx={{ height: "350px" }}>
-                  {/* <VuiTypography color="white" variant="lg" mb="6px" gutterBottom>
-                    Projects
-                  </VuiTypography> */}
-                  {/* <Projects /> */}
-                  {/* <HeatMap heatMapData={heatMapDataDashboard} heatMapOptions={heatMapOptionsDashboard} />
-                  </VuiBox> */}
-                  {/* <VuiBox
-                    mb="24px"
-                    height="220px"
-                    sx={{
-                      background: linearGradient(
-                        cardContent.main,
-                        cardContent.state,
-                        cardContent.deg
-                      ),
-                      borderRadius: "20px",
-                    }}
-                  > */}
-                    {/* <BarChart
-                      barChartData={barChartDataDashboard}
-                      barChartOptions={barChartOptionsDashboard}
-                    />
-                  </VuiBox>
-                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    Active Users
-                  </VuiTypography>
-                  <VuiBox display="flex" alignItems="center" mb="40px">
-                    <VuiTypography variant="button" color="success" fontWeight="bold">
-                      (+23){" "}
-                      <VuiTypography variant="button" color="text" fontWeight="regular">
-                        than last week
-                      </VuiTypography>
-                    </VuiTypography>
-                  </VuiBox>
-                  <Grid container spacing="50px">
-                    <Grid item xs={6} md={3} lg={3}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "4px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiBox
-                          bgColor="info"
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                          sx={{ borderRadius: "6px", width: "25px", height: "25px" }}
-                        >
-                          <IoWallet color="#fff" size="12px" />
-                        </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Users
-                        </VuiTypography>
-                      </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        32,984
-                      </VuiTypography>
-                      <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
-                    </Grid>
-                    <Grid item xs={6} md={3} lg={3}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "4px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiBox
-                          bgColor="info"
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                          sx={{ borderRadius: "6px", width: "25px", height: "25px" }}
-                        >
-                          <IoIosRocket color="#fff" size="12px" />
-                        </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Clicks
-                        </VuiTypography>
-                      </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        2,42M
-                      </VuiTypography>
-                      <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
-                    </Grid>
-                    <Grid item xs={6} md={3} lg={3}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "4px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiBox
-                          bgColor="info"
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                          sx={{ borderRadius: "6px", width: "25px", height: "25px" }}
-                        >
-                          <FaShoppingCart color="#fff" size="12px" />
-                        </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Sales
-                        </VuiTypography>
-                      </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        2,400$
-                      </VuiTypography>
-                      <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
-                    </Grid>
-                    <Grid item xs={6} md={3} lg={3}>
-                      <Stack
-                        direction="row"
-                        spacing={{ sm: "10px", xl: "4px", xxl: "10px" }}
-                        mb="6px"
-                      >
-                        <VuiBox
-                          bgColor="info"
-                          display="flex"
-                          justifyContent="center"
-                          alignItems="center"
-                          sx={{ borderRadius: "6px", width: "25px", height: "25px" }}
-                        >
-                          <IoBuild color="#fff" size="12px" />
-                        </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Items
-                        </VuiTypography>
-                      </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        320
-                      </VuiTypography>
-                      <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
-                    </Grid>
-                  </Grid> 
-                </VuiBox> 
-              </Card> */}
             </Grid>
             <Grid item xs={12} lg={6} xl={6}>
-              {/* <Card>
-                <VuiBox sx={{ height: "100%" }}>
-                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    {`${selectedChart.charAt(0).toUpperCase() + selectedChart.slice(1)} Overview`}
-                  </VuiTypography>
-                  <VuiBox display="flex" alignItems="center" mb="40px">
-                    <VuiTypography variant="button" color={packetDiff && packetDiff[selectedChart] > 0 ? "success" : "error"} fontWeight="bold">
-                      { currentPacket && lastFivePackets.length > 1 && lastFivePackets[lastFivePackets.length - 1][0]
-                        ? (packetDiff[selectedChart])
-                        : "N/A" }
-                      <VuiTypography variant="button" color="text" fontWeight="regular">
-                        {" "} change since last packet
-                      </VuiTypography>
-                    </VuiTypography>
-                  </VuiBox>
-                  {/* <VuiBox sx={{ height: "310px" }}>
-                    
-                    <LineChart
-                      lineChartData={temperatureLineChartData.length > 0
-                        ? [{ name: "Temperature", data: temperatureLineChartData }]
-                        : [{ name: "Temperature", data: temperatureLineChartData }]
-                      }
-                      lineChartOptions={lineChartOptionsDashboard}
-                    />
-                  </VuiBox> 
-                  <VuiBox display="flex" alignItems="center" mb="20px" sx={{width: '200px'}}>
-                    <Select value={selectedChart} onChange={handleChartChange} bgColor="info" sx={{width: '40px'}}>
-                      <MenuItem value="temperature">Temperature</MenuItem>
-                      <MenuItem value="humidity">Humidity</MenuItem>
-                      <MenuItem value="pressure">Pressure</MenuItem>
-                      <MenuItem value="gas">Gas</MenuItem>
-                      <MenuItem value="pm">Particulate Matter</MenuItem>
-                      <MenuItem value="light">Light</MenuItem>
-                      <MenuItem value="activity">Activity</MenuItem>
-                      <MenuItem value="steps">Steps</MenuItem>
-                    </Select>
-                  </VuiBox> */}
-
               <Card>
                 <VuiBox sx={{ height: "100%" }}>
                   <VuiBox display="flex" alignItems="center" justifyContent="space-between" mb="5px">
@@ -724,18 +536,7 @@ function Dashboard() {
         </VuiBox>
         <Grid container spacing={3} direction="row" justifyContent="center" alignItems="stretch">
           <Grid item xs={12} md={6} lg={6}>
-          {/* <Card> */}
-                {/* <VuiBox sx={{ height: "100%" }}>
-                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb="20px">
-                    Map Overview
-                  </VuiTypography>
-
-                  <VuiBox sx={{ borderRadius: "10px", height: "500px" }} mb="20px" >
-                  < OfflineMap lastTenLocations={lastTenLocations}/>
-                  </VuiBox>
-              </VuiBox> */}
             <LastFivePackets lastFivePackets={lastFivePackets}/>
-            {/* </Card> */}
           </Grid>
           <Grid item xs={12} md={6} lg={6}>
             <OrderOverview staticObstructed={currentPacket ? currentPacket.systemInfoPacket.simpleSensorReading.particulateStaticObstructed : false}
