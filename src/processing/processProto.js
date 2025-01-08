@@ -25,75 +25,170 @@ protobuf.load(path.resolve(__dirname, 'message.proto'), (err, loadedRoot) => {
 
 let portPath;
 
-// Function to initialize the serial port
+// // Function to initialize the serial port
+// function initProcessProto(mainWindow, filePath) {
+//   console.log("in initProcessProto");
+
+//   // Determine the port path based on the OS
+//   if (os.platform() === 'win32') {
+//     portPath = 'COM3'; // Change to the correct COM port
+//   } else {
+//     portPath = '/dev/tty.usbserial-56470099691'; // Adjust for macOS/Linux
+//   }
+
+//   console.log('Serial Port Path:', portPath);  // Debugging: log the port path
+
+//   // Ensure portPath is defined before creating SerialPort
+//   if (!portPath) {
+//       console.error('Error: Serial port path is undefined');
+//       return;
+//   }
+
+//   // Create the SerialPort instance
+//   const port = new SerialPort({
+//     path: portPath,
+//     baudRate: 115200
+//   });
+
+//   // Listen for data from the serial port
+//   port.on('data', (data) => {
+//     // const timeReceived = new Date().toLocaleString();
+
+//     // Get the current date and time
+//     const now = new Date();
+//     const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth is 0-indexed
+//     const day = String(now.getDate()).padStart(2, '0');
+//     const year = now.getFullYear();
+//     const hours = String(now.getHours()).padStart(2, '0');
+//     const minutes = String(now.getMinutes()).padStart(2, '0');
+//     const seconds = String(now.getSeconds()).padStart(2, '0');
+
+//     // Format as MM-DD-YYYY_HH:MM:SS
+//     const timeReceived = `${month}-${day}-${year}_${hours}.${minutes}.${seconds}`;
+
+//     console.log('Data received:', data.toString());
+//     decodeAndPrintMessage(data, mainWindow, filePath, timeReceived);  // Pass mainWindow to decodeAndPrintMessage
+//     // getCurrentPacket(data);
+//   });
+
+//   // Handle errors
+//   port.on('error', (err) => {
+//     console.error('Serial Port Error:', err);
+//   });
+// }
+
 function initProcessProto(mainWindow, filePath) {
-  console.log("in initProcessProto");
+  console.log("Initializing processProto");
 
-  // Determine the port path based on the OS
   if (os.platform() === 'win32') {
-    portPath = 'COM3'; // Change to the correct COM port
+    portPath = 'COM3'; // Adjust for your COM port
   } else {
-    portPath = '/dev/tty.usbmodem12341'; // Adjust for macOS/Linux
+    portPath = '/dev/tty.usbserial-56470099691'; // Adjust for macOS/Linux
   }
 
-  console.log('Serial Port Path:', portPath);  // Debugging: log the port path
+  console.log('Serial Port Path:', portPath);
 
-  // Ensure portPath is defined before creating SerialPort
   if (!portPath) {
-      console.error('Error: Serial port path is undefined');
-      return;
+    console.error('Error: Serial port path is undefined');
+    return;
   }
 
-  // Create the SerialPort instance
   const port = new SerialPort({
     path: portPath,
-    baudRate: 115200
+    baudRate: 115200,
+    autoOpen: true,
   });
 
-  // Listen for data from the serial port
-  port.on('data', (data) => {
-    // const timeReceived = new Date().toLocaleString();
+  let buffer = Buffer.alloc(0); // Initialize an empty buffer
 
-    // Get the current date and time
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // getMonth is 0-indexed
-    const day = String(now.getDate()).padStart(2, '0');
-    const year = now.getFullYear();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    // Format as MM-DD-YYYY_HH:MM:SS
-    const timeReceived = `${month}-${day}-${year}_${hours}.${minutes}.${seconds}`;
-
-    console.log('Data received:', data.toString());
-    decodeAndPrintMessage(data, mainWindow, filePath, timeReceived);  // Pass mainWindow to decodeAndPrintMessage
-    // getCurrentPacket(data);
+  port.on('data', (chunk) => {
+    buffer = Buffer.concat([buffer, chunk]);
   });
 
-  // Handle errors
+  const timeoutMs = 200;
+
+  function readUntilTimeout() {
+    const timeout = setTimeout(() => {
+      if (buffer.length > 0) {
+        console.log('Raw data received:', buffer.toString('hex'));
+
+        try {
+          decodeAndPrintMessage(buffer, mainWindow, filePath, new Date().toISOString());
+        } catch (error) {
+          console.error('Error while decoding message:', error);
+        }
+
+        buffer = Buffer.alloc(0); // Clear the buffer after processing
+      } else {
+        console.log('No data received within timeout.');
+      }
+
+      readUntilTimeout(); // Schedule the next read
+    }, timeoutMs);
+  }
+
+  port.on('open', () => {
+    console.log('Serial port opened.');
+    readUntilTimeout();
+  });
+
   port.on('error', (err) => {
-    console.error('Serial Port Error:', err);
+    console.error('Serial port error:', err);
+  });
+
+  port.on('close', () => {
+    console.log('Serial port closed.');
   });
 }
 
-function decodeAndPrintMessage(dataBuffer, mainWindow, filePath, timeReceived) {
+
+function decodeAndPrintMessage(buffer, mainWindow, filePath, timeReceived) {
   if (!root) {
     console.error('Protobuf definition not loaded');
     return;
   }
 
   try {
-    // Obtain a message type from the root
-    const Packet = root.lookupType('Packet');
-    const packet = Packet.decode(dataBuffer);
+    console.log('Raw data received:', buffer.toString('hex'));
 
-    // Convert the packet to a plain object
-    const packetObject = Packet.toObject(packet, { defaults: true });
 
-    console.log('Deserialized Packet:', packetObject);
+    // // Obtain a message type from the root
+    // const LoRaPacket = root.lookupType('LoRaPacket');
+    // const packet = LoRaPacket.decode(dataBuffer);
 
-    console.log('test indexing packetObject.systemInfoPacket.simpleSensorReading.temperature',  packetObject.systemInfoPacket.simpleSensorReading.temperature);
+    // // Convert the packet to a plain object
+    // const packetObject = LoRaPacket.toObject(packet, { defaults: true });
+    // console.log("converted to packetObject");
+
+    // console.log('Deserialized Packet:', packetObject);
+    
+    // while (buffer.length > 0) {
+    //   try {
+      const LoRaPacket = root.lookupType('LoRaPacket');
+      const packet = LoRaPacket.decode(buffer);
+      // console.log('Decoded Packet:', packet);
+
+      const packetObject = LoRaPacket.toObject(packet, { defaults: true });
+      console.log("converted to packetObject");
+
+      console.log('Deserialized packetObject:', packetObject);
+
+      console.log('test indexing packet.systemSummaryPacket.temperature',  packet.systemSummaryPacket.temperature);
+
+
+    
+    //     // Remove the processed message from the buffer
+    //     buffer = buffer.slice(packet.byteLength);
+    //   } catch (err) {
+    //     console.log('Waiting for more data...');
+    //     break; // Wait for more data to arrive
+    //   }
+    // }
+
+    // console.log('Deserialized Packet Object:', JSON.stringify(packetObject, null, 2));
+
+
+    // console.log('test indexing packetObject.systemSummaryPacket.temperature',  packetObject.systemSummaryPacket.temperature);
 
     // Store the current packet in the global variable
     currentPacket = packetObject;
@@ -103,7 +198,7 @@ function decodeAndPrintMessage(dataBuffer, mainWindow, filePath, timeReceived) {
 
     // Store current packet in the csv
 
-    saveToCsv(packetObject, filePath, timeReceived);
+    // saveToCsv(packetObject, filePath, timeReceived);
 
 
     // // Check for SystemInfoPacket payload and handle it

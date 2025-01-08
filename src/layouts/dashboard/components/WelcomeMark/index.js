@@ -23,7 +23,7 @@ const WelcomeMark = () => {
             Welcome back to
           </VuiTypography>
           <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
-            CollarID Dashboard
+            BuzzCam Dashboard
           </VuiTypography>
           <VuiTypography color="white" variant="h6" fontWeight="regular" mb="auto">
             Viewing current device information

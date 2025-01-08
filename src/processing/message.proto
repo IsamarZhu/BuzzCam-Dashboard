@@ -6,78 +6,16 @@ syntax = "proto3";
 //protoc message.proto --python_out=./ -I=./
 /**************/
 
-
 message PacketHeader {
     uint32 system_uid = 1;
     uint32 ms_from_start = 2;
     uint64 epoch = 3;
-    uint32 packet_index = 4;
-    bool request_ack = 5;
 }
 
-message SystemInfoPacket{
-    SimpleSensorReading simple_sensor_reading = 1;
-    bool device_engaged = 2;
-    SDCardState sdcard_state = 3;
-    BatteryState battery_state = 4;
-    optional GPSData gps_data = 5;
-}
-
-message ConfigPacket{
-    bool engage_system = 1;
-    bool enable_microphone = 2;
-    bool enable_activity = 3;
-    bool enable_particulate = 4;
-    bool enable_environmental = 5;
-    bool enable_light = 6;
-    bool enable_motion = 7;
-    bool enable_lora = 8;
-}
-
-message GPSData{
-    float latitude = 1;
-    float longitude = 2;
-    float altitude = 3;
-    float speed = 4;
-    float heading = 5;
-}
-
-message BatteryState{
-    bool charging = 1;
-    float voltage = 2;
-    optional float percentage = 3;
-}
-
-enum Activity {
-  STILL = 0;
-  WALK = 1;
-  RUN = 2;
-}
-
-message SimpleSensorReading{
-    uint32 index = 1;
-    uint32 epoch = 2;
-    float temperature = 3;
-    float humidity = 4;
-    float pressure = 5;
-    float gas = 6;
-    float pm2_5 = 7;
-    uint32 light = 8;
-    Activity activity = 9;
-    uint32 steps = 10;
-
-    bool particulate_static_obstructed = 11;
-    bool particulate_dynamic_obstructed = 12;
-    bool particulate_outside_detection_limits = 13;
-}
-
-message SDCardState{
-    uint32 space_remaining = 1;
-    uint32 total_space = 2;
-}
-
-message AckPacket{
-
+message Location{
+    float lat = 1;
+    float lon = 2;
+    float elev = 3;
 }
 
 message RadioPower{
@@ -86,15 +24,31 @@ message RadioPower{
     int32 rssi_est = 3;
 }
 
+message SDCardState{
+    uint32 space_remaining = 1;
+    uint32 total_space = 2;
+}
 
-message Packet {
+message SystemSummaryPacket{
+    float classifier_version = 1;
+    Location location = 2;
+    optional uint64 epoch_last_detection = 3;
+    uint32 transmission_interval_m = 4; // minutes
+    optional uint32 buzz_count_interval = 5;
+    optional uint32 species_1_count_interval = 6;
+    optional uint32 species_2_count_interval = 7;
+    optional SDCardState sd_card = 8;
+    optional RadioPower radio_power = 9;
+    float battery_voltage = 10;
+    float temperature = 11;
+    float humidity = 12;
+    optional float gas = 13;
+}
+
+message LoRaPacket {
     PacketHeader header = 1;
 
     oneof payload {
-        SystemInfoPacket system_info_packet = 2;
-        ConfigPacket config_packet = 3;
-        AckPacket ack_packet = 4;
+        SystemSummaryPacket system_summary_packet = 2;
     }
-
-    optional RadioPower radioPower = 5;
 }
