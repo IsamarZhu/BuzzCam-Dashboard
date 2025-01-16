@@ -22,6 +22,16 @@ protobuf.load(path.resolve(__dirname, 'message.proto'), (err, loadedRoot) => {
 
 let portPath;
 
+const { InfluxDB, Point } = require('@influxdata/influxdb-client');
+
+const host = process.env.INFLUX_HOST
+const token = process.env.INFLUX_TOKEN
+
+const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
+const writeApi = influxDB.getWriteApi('80718fbb557b61b0', 'buzzcam_test');
+writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method
+
+
 // // Function to initialize the serial port
 function initProcessProto(mainWindow, filePath) {
   console.log("Initializing processProto");
@@ -117,6 +127,9 @@ function decodeAndPrintMessage(buffer, mainWindow, filePath, timeReceived) {
     // Store current packet in the csv
     saveToCsv(packetObject, filePath, timeReceived);
 
+    // Write current packet to InfluxDB
+    writeToInfluxDB(packetObject, timeReceived);
+
   } catch (error) {
     console.error('Error decoding message:', error);
   }
@@ -148,6 +161,67 @@ function getCurrentPacket() {
   }
   return currentPacket;
 }
+
+// Function to write to InfluxDB
+function writeToInfluxDB(packetObject, timeReceived) {
+  const systemSummary = packetObject.systemSummaryPacket || {};
+  const packetLocation = packetObject.systemSummaryPacket.location || {};
+  const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
+  const radioPower = packetObject.systemSummaryPacket.radioPower || {};
+  
+  const point = new Point('system_summary')
+    .tag('systemUid', packetObject.header.systemUid)
+    .floatField('msFromStart', packetObject.header.msFromStart || null)
+    .floatField('epoch', packetObject.header.epoch || null)
+    .floatField('lat', packetLocation.lat || null)
+    .floatField('lon', packetLocation.lon || null)
+    .floatField('elev', packetLocation.elev || null)
+    .floatField('classifierVersion', systemSummary.classifierVersion || null)
+    .floatField('epochLastDetection', systemSummary.epochLastDetection || null)
+    .floatField('transmissionIntervalM', systemSummary.transmissionIntervalM || null)
+    .floatField('buzzCountInterval', systemSummary.buzzCountInterval || null)
+    .floatField('species_1CountInterval', systemSummary.species_1CountInterval || null)
+    .floatField('species_2CountInterval', systemSummary.species_2CountInterval || null)
+    .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining || null)
+    .floatField('sdcardTotalSpace', sdcardState.totalSpace || null)
+    .floatField('radioRssi', radioPower.rssi || null)
+    .floatField('radioSnr', radioPower.snr || null)
+    .floatField('radioRssiEst', radioPower.rssiEst || null)
+    .floatField('batteryVoltage', systemSummary.batteryVoltage || null)
+    .floatField('temperature', systemSummary.temperature || null)
+    .floatField('humidity', systemSummary.humidity || null)
+    .floatField('gas', systemSummary.gas || null)
+    .timestamp(new Date(timeReceived));
+
+    writeApi.writePoint(point); // write the point to InfluxDB
+
+    writeApi.flush().then(() => {
+      console.log('Data written to InfluxDB');
+    }).catch(err => {
+      console.error('Error writing to InfluxDB', err);
+    });
+
+}
+
+function closeInfluxDB() {
+  writeApi.close().then(() => {
+    console.log('InfluxDB writeApi closed');
+  }).catch(err => {
+    console.error('Error closing InfluxDB writeApi', err);
+  });
+}
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT. Closing InfluxDB writeApi...');
+  closeInfluxDB();
+  process.exit();
+});
+
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM. Closing InfluxDB writeApi...');
+  closeInfluxDB();
+  process.exit();
+});
 
 // Function to save Protobuf data into CSV file
 function saveToCsv(packetObject, csvFilePath, timeReceived) {
