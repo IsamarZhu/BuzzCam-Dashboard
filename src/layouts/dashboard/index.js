@@ -104,6 +104,12 @@ function Dashboard() {
   const [maxBuzzCount, setMaxBuzzCount] = useState(0); // keep track of the max buzz count so far
   const [minBuzzCount, setMinBuzzCount] = useState(Infinity); // keep track of the min buzz count so far
 
+  const [maxSpecies1Count, setMaxSpecies1Count] = useState(0);
+  const [minSpecies1Count, setMinSpecies1Count] = useState(Infinity);
+
+  const [maxSpecies2Count, setMaxSpecies2Count] = useState(0);
+  const [minSpecies2Count, setMinSpecies2Count] = useState(Infinity);
+
   // store all packets received in dictionary
 
   // store last packet received for each systemUid in a dict
@@ -277,6 +283,22 @@ function Dashboard() {
         // update minBuzzCount
         setMinBuzzCount(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzCountInterval));
         console.log("minBuzzCount ", minBuzzCount);
+
+        // update maxSpecies1Count
+        setMaxSpecies1Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.species_1CountInterval));
+        console.log("maxSpecies1Count ", maxSpecies1Count);
+
+        // update minSpecies1Count
+        setMinSpecies1Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.species_1CountInterval));
+        console.log("minSpecies1Count ", minSpecies1Count);
+
+        // update maxSpecies2Count
+        setMaxSpecies2Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.species_2CountInterval));
+        console.log("maxSpecies2Count ", maxSpecies2Count);
+
+        // update minSpecies2Count
+        setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.species_2CountInterval));
+        console.log("minSpecies2Count ", minSpecies2Count);
 
       });
 
@@ -493,7 +515,7 @@ function Dashboard() {
           </Grid>
         </VuiBox>
         <VuiBox sx={{ height: "100%", paddingBottom: "20px" }}>
-          <OfflineMap lastPackets={lastPackets} maxBuzzCount={maxBuzzCount} minBuzzCount={minBuzzCount}/>
+          <OfflineMap lastPackets={lastPackets} maxBuzzCount={maxBuzzCount} minBuzzCount={minBuzzCount} maxSpecies1Count={maxSpecies1Count} minSpecies1Count={minSpecies1Count} maxSpecies2Count={maxSpecies2Count} minSpecies2Count={minSpecies2Count}/>
           {/* <Grid container spacing={3}>
             
             <Grid item xs={12} lg={6} xl={6}>
