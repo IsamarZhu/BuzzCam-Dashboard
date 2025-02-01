@@ -25,7 +25,8 @@ let portPath;
 const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
-const token = process.env.INFLUX_TOKEN
+// const token = process.env.INFLUX_TOKEN
+const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
 
 const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
 const writeApi = influxDB.getWriteApi('80718fbb557b61b0', 'buzzcam_test');

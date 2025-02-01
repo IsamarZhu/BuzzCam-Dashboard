@@ -243,12 +243,12 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
     const [renderTrigger, setRenderTrigger] = useState(false); // Dummy state to force re-render
 
     useEffect(() => {
-        console.log("updating lastPackets in offline map")
+        // console.log("updating lastPackets in offline map")
         setPackets(lastPackets);
     }, [lastPackets]);
 
     useEffect(() => {
-        console.log("Updated packets:", packets);
+        // console.log("Updated packets:", packets);
     }, [packets]);
 
     useEffect(() => {
@@ -306,17 +306,17 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
-                    {console.log("packets in map", packets)}
+                    {/* {console.log("packets in map", packets)} */}
                     {packets && (() => {
                         const markers = [];
                         for (const index in packets) {
                             if (packets.hasOwnProperty(index)) {
                                 const packet = packets[index]; // Access the value associated with the key
-                                console.log("in map, last packet index", index);
-                                console.log("buzzCountInterval ", packet.systemSummaryPacket.buzzCountInterval);
-                                console.log("maxBuzzCount ", maxBuzzCount);
-                                console.log("minBuzzCount ", minBuzzCount);
-                                console.log("opacity ", getOpacity(packet));
+                                // console.log("in map, last packet index", index);
+                                // console.log("buzzCountInterval ", packet.systemSummaryPacket.buzzCountInterval);
+                                // console.log("maxBuzzCount ", maxBuzzCount);
+                                // console.log("minBuzzCount ", minBuzzCount);
+                                // console.log("opacity ", getOpacity(packet));
                                 markers.push(
                                     <CircleMarker
                                         key={`${renderTrigger}-${index}`} // Use renderTrigger and index to force re-render
@@ -348,8 +348,8 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                 <VuiBox
                     sx={{
                         position: 'absolute',
-                        top: '10px',
-                        right: '10px',
+                        top: '20px',
+                        right: '20px',
                         zIndex: 1000,
                         backgroundColor: 'white',
                         padding: '5px',

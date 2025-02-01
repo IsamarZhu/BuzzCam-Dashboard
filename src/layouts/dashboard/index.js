@@ -93,6 +93,16 @@ function getNumFromLong(longObj) {
 
 }
 
+
+const { InfluxDB, Point } = require('@influxdata/influxdb-client');
+
+const host = process.env.INFLUX_HOST
+const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+
+const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
+const queryApi = influxDB.getQueryApi('80718fbb557b61b0');
+
+
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
@@ -109,6 +119,90 @@ function Dashboard() {
 
   const [maxSpecies2Count, setMaxSpecies2Count] = useState(0);
   const [minSpecies2Count, setMinSpecies2Count] = useState(Infinity);
+
+  const [temperature, setTemperature] = useState("N/A");
+  const [humidity, setHumidity] = useState("N/A");
+  const [gas, setGas] = useState("N/A");
+  const [classifierVersion, setClassifierVersion] = useState("N/A");
+  const [epochLastDetection, setEpochLastDetection] = useState("N/A");
+  const [transmissionIntervalM, setTransmissionIntervalM] = useState("N/A");
+  const [sdcardSpaceRemaining, setSdcardSpaceRemaining] = useState("N/A");
+
+  const [sdcardTotalSpace, setSdcardTotalSpace] = useState("N/A");
+
+  const [selectedUID, setSelectedUID] = useState("None"); // current UID that is being displayed, selected from dropdown
+
+  const getQuery = async () => {
+    const fluxQuery = `
+      from(bucket: "buzzcam_test")
+        |> range(start: -24h)
+        |> filter(fn: (r) => r._measurement == "system_summary")
+        |> filter(fn: (r) => r.systemUid == "${selectedUID}")
+        |> group(columns: ["_time", "_start", "_stop", "_field"])
+        |> last()
+        |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+    `;
+    try {
+      const results = {};
+      for await (const { values, tableMeta } of queryApi.iterateRows(fluxQuery)) {
+        const o = tableMeta.toObject(values);
+        console.log("InfluxDB response:", o);
+        if (o.temperature !== undefined) {
+          results.temperature = o.temperature;
+        }
+        if (o.humidity !== undefined) {
+          results.humidity = o.humidity;
+        }
+        if (o.gas !== undefined) {
+          results.gas = o.gas;
+        }
+
+        if (o.classifierVersion !== undefined) {
+          results.classifierVersion = o.classifierVersion;
+        }
+        
+        if (o.epochLastDetection !== undefined) {
+          results.epochLastDetection = o.epochLastDetection;
+        }
+
+        if (o.transmissionIntervalM !== undefined) {
+          results.transmissionIntervalM = o.transmissionIntervalM;
+        }
+
+        if (o.sdcardSpaceRemaining !== undefined) {
+          results.sdcardSpaceRemaining = o.sdcardSpaceRemaining;
+        }
+      }
+      // Update state variables with the results
+      if (results.temperature !== undefined) {
+        setTemperature(results.temperature);
+      }
+      if (results.humidity !== undefined) {
+        setHumidity(results.humidity);
+      }
+      if (results.gas !== undefined) {
+        setGas(results.gas);
+      }
+
+      if (results.classifierVersion !== undefined) {
+        setClassifierVersion(results.classifierVersion);
+      }
+
+      if (results.epochLastDetection !== undefined) {
+        setEpochLastDetection(results.epochLastDetection);
+      }
+
+      if (results.transmissionIntervalM !== undefined) {
+        setTransmissionIntervalM(results.transmissionIntervalM);
+      }
+
+      if (results.sdcardSpaceRemaining !== undefined) {
+        setSdcardSpaceRemaining(results.sdcardSpaceRemaining);
+      }
+    } catch (error) {
+      console.error("Error querying InfluxDB:", error);
+    }
+  };
 
   // store all packets received in dictionary
 
@@ -186,11 +280,23 @@ function Dashboard() {
   //   stepsDataRef.current = stepsLineChartData;
   // }, [stepsLineChartData]);
 
+  // useEffect(() => {
+  //   const getQuery = async () => {
+  //     const fluxQuery = 'from(bucket:"buzzcam_test") |> range(start: -24h) |> last()';
+  //     for await (const { values, tableMeta } of queryApi.iterateRows(fluxQuery)) {
+  //       const o = tableMeta.toObject(values);
+  //       console.log(`${o._temperature} temperature`);
+  //       setTemperature(o._temperature);
+  //     }
+  //   };
+
+  //   getQuery();
+  // }, []);
 
   useEffect(() => {
     if (window.electron && window.electron.ipcRenderer) {
       // Listen for the packet-updated event
-      window.electron.ipcRenderer.on('packet-updated', (event, packet) => {
+      window.electron.ipcRenderer.on('packet-updated', async (event, packet) => {
         console.log("Packet updated on frontend")
         setCurrentPacket(packet);
         console.log("Packet", packet);
@@ -300,16 +406,31 @@ function Dashboard() {
         setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.species_2CountInterval));
         console.log("minSpecies2Count ", minSpecies2Count);
 
+        // only requery if the current selected UID is being updated
+        console.log("selectedUID ", selectedUID);
+        if (String(currentUID) === String(selectedUID)) {
+          // reset sd card space total space
+          setSdcardTotalSpace(packet.systemSummaryPacket.sdCard.totalSpace);
+
+          console.log("currentUID === selectedUID")
+
+          await getQuery();
+        }
+        
+
       });
 
       // Cleanup the event listener when the component unmounts
       return () => {
-        window.electron.ipcRenderer.removeAllListeners('packet-updated');
+        if (window.electron && window.electron.ipcRenderer && typeof window.electron.ipcRenderer.removeAllListeners === 'function') {
+          window.electron.ipcRenderer.removeAllListeners('packet-updated');
+        }
+        // window.electron.ipcRenderer.removeAllListeners('packet-updated');
       };
     } else {
       console.error("ipcRenderer is not available.");
     }
-  }, []);
+  }, [selectedUID]);
 
   // // Log updated temperature data
   // useEffect(() => {
@@ -354,6 +475,30 @@ function Dashboard() {
     console.log("Updated currentPacket: ", currentPacket);
   }, [currentPacket]);
 
+
+  // also update the minicard values if the selected UID changes
+  useEffect(() => {
+    console.log("selectedUID in useEffect: ", selectedUID);
+    if (selectedUID != "None") {
+      console.log("currentUID === selectedUID")
+      // influxDB query
+      
+
+      getQuery();
+    
+    }
+  }, [selectedUID]);
+  
+  // handle selected UID change
+  const handleSelectedUIDChange = (event) => {
+    const newUID = event.target.value;
+    console.log("Selected UID new: ", newUID);
+    setSelectedUID(newUID); // Update the selected chart based on dropdown selection
+  };
+
+
+
+
   // // handle line chart change
   // const handleChartChange = (event) => {
   //   setSelectedChart(event.target.value); // Update the selected chart based on dropdown selection
@@ -386,21 +531,113 @@ function Dashboard() {
       <DashboardNavbar />
       <VuiBox py={3}>
         <VuiBox mb={3}>
-          <Grid container spacing={3}>
+
+          <VuiBox mb={3}>
+            <Grid container spacing="18px">
+              <Grid item xs={12} lg={12} xl={5}>
+                <WelcomeMark />
+              </Grid>
+              <Grid item xs={12} lg={8} xl={4}>
+                <VuiBox mb={3} sx={{ width: '100%' }}>
+                  <Select
+                    value={selectedUID}
+                    onChange={handleSelectedUIDChange}
+                    displayEmpty
+                    sx={{ width: '230px' }}
+                  >
+                    <MenuItem value="None">
+                      Select UID
+                    </MenuItem>
+                    {console.log("lastPackets keys:", Object.keys(lastPackets))}
+                    {Object.keys(lastPackets).map((uid, index) => (
+                      <MenuItem key={index} value={uid}>
+                        {uid}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </VuiBox>
+
+
+                <Grid container spacing={1}>
+                  <Grid item xs={12} lg={6} xl={6}>
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Temperature", fontWeight: "regular" }}
+                        count={temperature ? `${parseFloat(temperature).toFixed(1)} °C` : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Humidity", fontWeight: "regular" }}
+                        count={humidity ? `${parseFloat(humidity).toFixed(1)} %` : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Gas", fontWeight: "regular" }}
+                        count={gas ? parseFloat(gas).toFixed(1) : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+                  </Grid>
+
+                  <Grid item xs={12} lg={6} xl={6}>
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Classifier Version", fontWeight: "regular" }}
+                        count={classifierVersion ? parseFloat(classifierVersion) : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Epoch Last Detection", fontWeight: "regular" }}
+                        count={epochLastDetection ? new Date(epochLastDetection).toLocaleString() : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Transmission Interval", fontWeight: "regular" }}
+                        count={transmissionIntervalM ? `${parseFloat(transmissionIntervalM)} min` : "N/A"}
+                        icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+                  </Grid>
+                </Grid>
+
+                
+                
+              </Grid>
+              <Grid item xs={12} lg={4} xl={4}>
+              <SatisfactionRate value={selectedUID != "None" ? (sdcardSpaceRemaining * 0.001).toFixed(2) : "N/A"} total={selectedUID != "None" ? (sdcardTotalSpace * 0.001).toFixed(2) : "N/A"}/>
+                {/* <ReferralTracking charging={currentPacket ? currentPacket.systemInfoPacket.batteryState.charging : false}
+                  voltage={currentPacket ? currentPacket.systemInfoPacket.batteryState.voltage : "N/A"}
+                  percentage={currentPacket ? currentPacket.systemInfoPacket.batteryState.percentage : "N/A"
+                  } /> */}
+              </Grid>
+            </Grid>
+          </VuiBox>
+
+          
+
+          {/* <Grid container spacing={3}>
             <Grid item xs={12} md={6} xl={3}>
-              {/* <MiniStatisticsCard
+              <MiniStatisticsCard
                 title={{ text: "temperature", fontWeight: "regular" }}
-                count={currentPacket ?
-                  currentPacket.systemInfoPacket.simpleSensorReading.temperature.toFixed(4) : "N/A"
-                }
-                percentage={{ color: packetDiff && packetDiff["temperature"] > 0 ? "success" : "error", text: currentPacket && lastFivePackets.length > 1 && lastFivePackets[lastFivePackets.length - 1][0]
-                  ? (packetDiff["temperature"])
-                  : "N/A" }}
+                count={temperature ? parseFloat(temperature).toFixed(4) : "N/A"}
+                percentage={{ color: "success", text: "N/A" }}
                 icon={{ color: "info", component: <FaTemperatureHalf size="20px" color="white" /> }}
-              /> */}
+              />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
-              {/* <MiniStatisticsCard
+              <MiniStatisticsCard
                 title={{ text: "humidity" }}
                 count={currentPacket ?
                   currentPacket.systemInfoPacket.simpleSensorReading.humidity.toFixed(4) : "N/A"
@@ -409,10 +646,10 @@ function Dashboard() {
                   ? (packetDiff["humidity"])
                   : "N/A" }}
                 icon={{ color: "info", component: <RiWaterPercentFill size="20px" color="white" /> }}
-              /> */}
+              />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
-              {/* <MiniStatisticsCard
+              <MiniStatisticsCard
                 title={{ text: "pressure" }}
                 count={currentPacket ?
                   currentPacket.systemInfoPacket.simpleSensorReading.pressure.toFixed(4) : "N/A"
@@ -421,10 +658,10 @@ function Dashboard() {
                   ? (packetDiff["pressure"])
                   : "N/A" }}
                 icon={{ color: "info", component: <IoSpeedometerSharp size="20px" color="white" /> }}
-              /> */}
+              />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
-              {/* <MiniStatisticsCard
+              <MiniStatisticsCard
                 title={{ text: "gas" }}
                 count={currentPacket ?
                   currentPacket.systemInfoPacket.simpleSensorReading.gas.toFixed(4) : "N/A"
@@ -433,9 +670,9 @@ function Dashboard() {
                   ? (packetDiff["gas"])
                   : "N/A" }}
                 icon={{ color: "info", component: <PiWindBold size="20px" color="white" /> }}
-              /> */}
+              />
             </Grid>
-          </Grid>
+          </Grid> */}
         </VuiBox>
 
         <VuiBox mb={3}>
@@ -498,22 +735,7 @@ function Dashboard() {
             </Grid>
           </Grid>
         </VuiBox>
-        <VuiBox mb={3}>
-          <Grid container spacing="18px">
-            <Grid item xs={12} lg={12} xl={5}>
-              <WelcomeMark />
-            </Grid>
-            <Grid item xs={12} lg={6} xl={3}>
-              {/* <SatisfactionRate value={currentPacket ? (currentPacket.systemInfoPacket.sdcardState.spaceRemaining * 0.001).toFixed(4) : "N/A"} total={currentPacket ? (currentPacket.systemInfoPacket.sdcardState.totalSpace * 0.001).toFixed(4) : "N/A"}/> */}
-            </Grid>
-            <Grid item xs={12} lg={6} xl={4}>
-              {/* <ReferralTracking charging={currentPacket ? currentPacket.systemInfoPacket.batteryState.charging : false}
-                voltage={currentPacket ? currentPacket.systemInfoPacket.batteryState.voltage : "N/A"}
-                percentage={currentPacket ? currentPacket.systemInfoPacket.batteryState.percentage : "N/A"
-                } /> */}
-            </Grid>
-          </Grid>
-        </VuiBox>
+        
         <VuiBox sx={{ height: "100%", paddingBottom: "20px" }}>
           <OfflineMap lastPackets={lastPackets} maxBuzzCount={maxBuzzCount} minBuzzCount={minBuzzCount} maxSpecies1Count={maxSpecies1Count} minSpecies1Count={minSpecies1Count} maxSpecies2Count={maxSpecies2Count} minSpecies2Count={minSpecies2Count}/>
           {/* <Grid container spacing={3}>
@@ -593,6 +815,35 @@ function Dashboard() {
           </Grid>
         </Grid>
       </VuiBox>
+            
+      <VuiBox>
+        <Grid container spacing={1} direction="row" justifyContent="center" alignItems="stretch">
+          <Grid item xs={12} md={6} lg={4}>
+            <VuiBox>
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&panelId=1&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>        
+              </div>
+            </VuiBox>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <VuiBox>
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&theme=dark&panelId=3&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>
+              </div>
+            </VuiBox>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <VuiBox>
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&panelId=2&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>        
+              </div>
+            </VuiBox>
+          </Grid>
+        </Grid>
+      </VuiBox>
+      
       <Footer />
     </DashboardLayout>
   );
