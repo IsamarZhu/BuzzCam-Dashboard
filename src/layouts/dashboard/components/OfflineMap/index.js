@@ -325,7 +325,7 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                         weight={1}
                                         opacity={getOpacity(packet)}
                                         fillOpacity={getOpacity(packet)}
-                                        color="blue"
+                                        color="#f1a307"
                                         eventHandlers={{
                                             click: () => {
                                                 setSelectedPacket(packet);

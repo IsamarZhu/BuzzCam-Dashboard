@@ -6,6 +6,7 @@ import VuiTypography from "components/VuiTypography";
 
 import gif from "assets/images/cardimgfree.png";
 import wilddog from "assets/images/wilddog_welcome_card.jpg";
+import buzzcam_welcome_card from "assets/images/buzzcam_welcome_card.jpg";
 
 
 const WelcomeMark = () => {
@@ -13,7 +14,7 @@ const WelcomeMark = () => {
     <Card sx={() => ({
       height: "340px",
       py: "32px",
-      backgroundImage: `url(${wilddog})`,
+      backgroundImage: `url(${buzzcam_welcome_card})`,
       backgroundSize: "cover",
       backgroundPosition: "50%"
     })}>

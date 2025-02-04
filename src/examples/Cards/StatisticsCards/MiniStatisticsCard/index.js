@@ -76,7 +76,7 @@ function MiniStatisticsCard({ bgColor, title, count, percentage, icon, direction
             {direction === "right" ? (
               <Grid item xs={4}>
                 <VuiBox
-                  bgColor="#0075FF"
+                  bgColor="#7d9bd8"
                   color="white"
                   width="3rem"
                   height="3rem"
