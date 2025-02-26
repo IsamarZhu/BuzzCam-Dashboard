@@ -26,10 +26,10 @@ const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
 // const token = process.env.INFLUX_TOKEN
-const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
-const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
-const writeApi = influxDB.getWriteApi('80718fbb557b61b0', 'buzzcam_test');
+const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
+const writeApi = influxDB.getWriteApi('915a1d8148ba09aa', 'patagonia');
 writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method
 
 
@@ -40,7 +40,7 @@ function initProcessProto(mainWindow, filePath) {
   if (os.platform() === 'win32') {
     portPath = 'COM3'; // Adjust for your COM port
   } else {
-    portPath = '/dev/tty.usbserial-56470099691'; // Adjust for macOS/Linux
+    portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
   } // TODO make serial port general?
 
   console.log('Serial Port Path:', portPath);
@@ -110,7 +110,17 @@ function decodeAndPrintMessage(buffer, mainWindow, filePath, timeReceived) {
 
     // Obtain a message type from the root
     const LoRaPacket = root.lookupType('LoRaPacket');
-    const packet = LoRaPacket.decode(buffer);
+
+    // Attempt to decode the buffer into a generic object
+    let packet;
+    try {
+      packet = LoRaPacket.decode(buffer);
+    } catch (decodeError) {
+      console.log('Packet received is not a LoraPacket:', decodeError);
+      return; // Exit if the buffer cannot be decoded
+    }
+
+    // const packet = LoRaPacket.decode(buffer);
 
     const packetObject = LoRaPacket.toObject(packet, { defaults: true });
     console.log("converted to packetObject");
@@ -169,6 +179,8 @@ function writeToInfluxDB(packetObject, timeReceived) {
   const packetLocation = packetObject.systemSummaryPacket.location || {};
   const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
   const radioPower = packetObject.systemSummaryPacket.radioPower || {};
+
+  console.log("systemSummary.classifierVersion", systemSummary.classifierVersion)
   
   const point = new Point('system_summary')
     .tag('systemUid', packetObject.header.systemUid)
@@ -177,21 +189,21 @@ function writeToInfluxDB(packetObject, timeReceived) {
     .floatField('lat', packetLocation.lat || null)
     .floatField('lon', packetLocation.lon || null)
     .floatField('elev', packetLocation.elev || null)
-    .floatField('classifierVersion', systemSummary.classifierVersion || null)
-    .floatField('epochLastDetection', systemSummary.epochLastDetection || null)
-    .floatField('transmissionIntervalM', systemSummary.transmissionIntervalM || null)
-    .floatField('buzzCountInterval', systemSummary.buzzCountInterval || null)
-    .floatField('species_1CountInterval', systemSummary.species_1CountInterval || null)
-    .floatField('species_2CountInterval', systemSummary.species_2CountInterval || null)
-    .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining || null)
-    .floatField('sdcardTotalSpace', sdcardState.totalSpace || null)
-    .floatField('radioRssi', radioPower.rssi || null)
-    .floatField('radioSnr', radioPower.snr || null)
-    .floatField('radioRssiEst', radioPower.rssiEst || null)
-    .floatField('batteryVoltage', systemSummary.batteryVoltage || null)
-    .floatField('temperature', systemSummary.temperature || null)
-    .floatField('humidity', systemSummary.humidity || null)
-    .floatField('gas', systemSummary.gas || null)
+    .floatField('classifierVersion', systemSummary.classifierVersion || 0)
+    .floatField('epochLastDetection', systemSummary.epochLastDetection || 0)
+    .floatField('transmissionIntervalM', systemSummary.transmissionIntervalM || 0)
+    .floatField('buzzCountInterval', systemSummary.buzzCountInterval || 0)
+    .floatField('species_1CountInterval', systemSummary.species_1CountInterval || 0)
+    .floatField('species_2CountInterval', systemSummary.species_2CountInterval || 0)
+    .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining || 0)
+    .floatField('sdcardTotalSpace', sdcardState.totalSpace || 0)
+    .floatField('radioRssi', radioPower.rssi || 0)
+    .floatField('radioSnr', radioPower.snr || 0)
+    .floatField('radioRssiEst', radioPower.rssiEst || 0)
+    .floatField('batteryVoltage', systemSummary.batteryVoltage || 0)
+    .floatField('temperature', systemSummary.temperature || 0)
+    .floatField('humidity', systemSummary.humidity || 0)
+    .floatField('gas', systemSummary.gas || 0)
     .timestamp(new Date(timeReceived));
 
     writeApi.writePoint(point); // write the point to InfluxDB

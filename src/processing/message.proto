@@ -6,6 +6,274 @@ syntax = "proto3";
 //protoc message.proto --python_out=./ -I=./
 /**************/
 
+message RadioPower{
+    int32 rssi = 1;
+    int32 snr = 2;
+    int32 rssi_est = 3;
+}
+
+message SimpleSensorReading{
+    uint32 index = 1;
+    uint32 timestamp_unix = 2;
+    float temperature = 3;
+    float humidity = 4;
+    float co2 = 5;
+    float light_level = 6;
+}
+
+/** defined by Bosch */
+enum SignalIdentifier {
+    UNDEFINED           = 0;
+    IAQ                 = 1;
+    STATIC_IAQ          = 2;
+    CO2_EQ              = 3;
+    BREATH_VOC_EQ       = 4;
+    RAW_TEMPERATURE     = 6;
+    RAW_PRESSURE        = 7;
+    RAW_HUMIDITY        = 8;
+    RAW_GAS             = 9;
+    STABILIZATION_STATUS = 12;
+    RUN_IN_STATUS       = 13;
+    SENSOR_HEAT_COMPEN_TEMP = 14;
+    HEAT_COMPEN_HUMID   = 15;
+    GAS_PERCENTAGE      = 21;
+} ;
+
+/** defined by Bosch */
+enum SensorAccuracy {
+    UNRELIABLE          = 0;
+    LOW_ACCURACY        = 1;
+    MEDIUM_ACCURACY     = 2;
+    HIGH_ACCURACY       = 3;
+} ;
+
+message SensorReading{
+    uint32 packet_index = 1;
+    uint32 sample_period = 2;
+    
+    message Payload {
+        fixed64 timestamp_sensor = 1;
+        uint64 timestamp_unix = 2;
+        uint32 timestamp_ms_from_start = 3;
+        float signal = 4;
+        uint32 signal_dimensions = 5;
+        SignalIdentifier sensor_id = 6;
+        SensorAccuracy accuracy = 7;
+    }
+    repeated Payload payload = 3;
+}
+
+message SensorConfig{
+    bool enable_temperature = 1;
+    bool enable_humidity = 2;
+    bool enable_gas = 3;
+}
+
+message SDCardState{
+    bool detected = 1;
+    uint64 space_remaining = 2;
+    uint64 estimated_remaining_recording_time = 3;
+    uint32 total_space = 4;
+}
+
+message MarkState{
+    //bool beep_enabled = 1;
+    uint32 mark_number = 1;
+    uint64 timestamp_unix = 2;
+}
+
+message MarkPacket{
+    //optional string annotation = 1 [(nanopb).max_length = 50];// throttle max character count (e.g., 50)
+    optional string annotation = 1;// throttle max character count (e.g., 50)
+    bool beep_enabled = 2;
+}
+
+message BatteryState{
+    bool charging = 1;
+    float voltage = 2;
+    optional float percentage = 3;
+}
+
+message Device{
+    uint32 UID = 1;
+    uint32 range = 2;
+}
+
+
+
+message SystemInfoPacket{
+    SimpleSensorReading simple_sensor_reading = 1;
+    bool device_recording = 2;
+    SDCardState sdcard_state = 3;
+    MarkState mark_state = 4;
+    BatteryState battery_state = 5;
+    repeated Device discoveredDevices = 6;
+    optional Location gps_location = 7;
+}
+
+enum MicSampleFreq {
+    SAMPLE_RATE_8000 = 0;
+    SAMPLE_RATE_11025 = 1;
+    SAMPLE_RATE_16000 = 2;
+    SAMPLE_RATE_22500 = 3;
+    SAMPLE_RATE_24000 = 4;
+    SAMPLE_RATE_32000 = 5;
+    SAMPLE_RATE_44100 = 6;
+    SAMPLE_RATE_48000 = 7;
+    SAMPLE_RATE_96000 = 8;
+}
+
+enum MicGain{
+    GAIN_60_DB = 0;
+    GAIN_57_DB = 1;
+    GAIN_54_DB = 2;
+    GAIN_51_DB = 3;
+    GAIN_48_DB = 4;
+    GAIN_45_DB = 5;
+    GAIN_42_DB = 6;
+    GAIN_39_DB = 7;
+    GAIN_36_DB = 8;
+    GAIN_33_DB = 9;
+    GAIN_30_DB = 10;
+    GAIN_27_DB = 11;
+    GAIN_24_DB = 12;
+    GAIN_21_DB = 13;
+    GAIN_18_DB = 14;
+    GAIN_15_DB = 15;
+    GAIN_12_DB = 16;
+    GAIN_9_DB = 17;
+    GAIN_6_DB = 18;
+    GAIN_3_DB = 19;
+    GAIN_0_DB = 20;
+    GAIN_NEG_3_DB = 21;
+    GAIN_NEG_6_DB = 22;
+    GAIN_NEG_9_DB = 23;
+    GAIN_NEG_12_DB = 24;
+    GAIN_NEG_15_DB = 25;
+}
+
+enum MicBitResolution{
+    BIT_RES_8 = 0;
+    BIT_RES_16 = 1;
+    BIT_RES_24 = 2;
+}
+
+enum CompressionType{
+    OPUS = 0;
+    FLAC = 1;
+}
+
+message AudioCompression{
+    bool enabled = 1;
+    CompressionType compression_type = 2;
+    uint32 compression_factor = 3;
+}
+
+message AudioConfig{
+    bool channel_1 = 1;
+    bool channel_2 = 2;
+    MicSampleFreq sample_freq = 3;
+    MicGain mic_gain = 4;
+    MicBitResolution bit_resolution = 5;
+    AudioCompression audio_compression = 6;
+    float estimated_record_time = 7;
+    bool free_run_mode = 8;
+    bool chirp_enable = 9;
+}
+
+message ScheduleConfig{
+    bool Sunday = 1;
+    bool Monday = 2;
+    bool Tuesday = 3;
+    bool Wednesday = 4;
+    bool Thursday = 5;
+    bool Friday = 6;
+    bool Saturday = 7;
+    uint32 start_hour = 8; 
+    uint32 start_minute = 9;
+    uint32 stop_hour = 10;
+    uint32 stop_minute = 11;
+}
+
+message LowPowerConfig{
+    bool lowPowerMode = 1;
+}
+
+message CameraControl{
+    bool pair_with_nearby_cameras = 1;
+    bool wakeup_cameras = 2;
+    bool capture = 3;
+}
+
+message DeviceUID{
+    string addr = 1; 
+}
+
+message NetworkState{
+    uint32 number_of_discovered_devices = 1;
+    repeated DeviceUID discovered_device_UID = 2;
+    uint32 channel = 3;
+    uint32 panID = 4;  
+    bool slaveSync = 5;
+    bool masterNode = 6;
+}
+
+message ConfigPacket{
+    AudioConfig audio_config = 1;
+    repeated ScheduleConfig schedule_config = 2;
+    SensorConfig sensor_config = 3;
+    LowPowerConfig low_power_config = 4;
+    NetworkState network_state = 5;
+    bool enable_recording = 6;
+    bool enable_led = 7;
+}
+
+message PeerAddress {
+    // Encoded as u16.
+    uint32 pan_id = 1;
+
+    // 2 or 8 bytes (short / extended).
+    bytes address = 2;
+}
+
+message UWB_Range{
+    DeviceUID openthread_UID = 1;
+    uint32 system_UID = 2;
+    PeerAddress UWB_addr = 3;
+    uint32 range = 4;
+    float stdDev = 5;
+}
+
+message UWB_Info{
+    DeviceUID openthread_UID = 1;
+    uint32 system_UID = 2;
+    PeerAddress UWB_addr = 3;
+}
+
+message UWB_Packet{
+    bool startRanging = 1;
+    bool turnOnUWB = 2;
+    repeated UWB_Range ranges = 3;
+}
+
+
+message SpecialFunction{
+    oneof payload{
+        bool format_sdcard = 1;
+        CameraControl camera_control = 2;
+        UWB_Packet uwb_packet = 3;
+        bool openthread_sync_time = 4;
+        bool mag_calibration = 5;
+        bool slave_req_config = 6;
+        uint32 timestamp = 7;
+        bool dfu_mode = 8;
+        UWB_Info uwb_info = 9;
+	    bool reset_config = 10;
+    }
+}
+
+
+
 message PacketHeader {
     uint32 system_uid = 1;
     uint32 ms_from_start = 2;
@@ -18,16 +286,6 @@ message Location{
     float elev = 3;
 }
 
-message RadioPower{
-    int32 rssi = 1;
-    int32 snr = 2;
-    int32 rssi_est = 3;
-}
-
-message SDCardState{
-    uint32 space_remaining = 1;
-    uint32 total_space = 2;
-}
 
 message SystemSummaryPacket{
     float classifier_version = 1;
@@ -45,10 +303,25 @@ message SystemSummaryPacket{
     optional float gas = 13;
 }
 
+message Packet {
+    PacketHeader header = 1;
+
+    oneof payload {
+        SystemInfoPacket system_info_packet = 2;
+        MarkPacket mark_packet = 3;
+        ConfigPacket config_packet = 4;
+        SpecialFunction special_function = 5;
+        
+    }
+}
+
 message LoRaPacket {
     PacketHeader header = 1;
 
     oneof payload {
         SystemSummaryPacket system_summary_packet = 2;
     }
+
+    optional RadioPower radioPower = 3;
 }
+

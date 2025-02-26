@@ -99,10 +99,10 @@ function getNumFromLong(longObj) {
 const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
-const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
-const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
-const queryApi = influxDB.getQueryApi('80718fbb557b61b0');
+const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
+const queryApi = influxDB.getQueryApi('915a1d8148ba09aa');
 
 
 function Dashboard() {
@@ -128,15 +128,18 @@ function Dashboard() {
   const [classifierVersion, setClassifierVersion] = useState("N/A");
   const [epochLastDetection, setEpochLastDetection] = useState("N/A");
   const [transmissionIntervalM, setTransmissionIntervalM] = useState("N/A");
-  const [sdcardSpaceRemaining, setSdcardSpaceRemaining] = useState("N/A");
 
+  const [rssiEst, setRssiEst] = useState("N/A");
+  const [snr, setSnr] = useState("N/A");
+
+  const [sdcardSpaceRemaining, setSdcardSpaceRemaining] = useState("N/A");
   const [sdcardTotalSpace, setSdcardTotalSpace] = useState("N/A");
 
   const [selectedUID, setSelectedUID] = useState("None"); // current UID that is being displayed, selected from dropdown
 
   const getQuery = async () => {
     const fluxQuery = `
-      from(bucket: "buzzcam_test")
+      from(bucket: "patagonia")
         |> range(start: -24h)
         |> filter(fn: (r) => r._measurement == "system_summary")
         |> filter(fn: (r) => r.systemUid == "${selectedUID}")
@@ -174,6 +177,14 @@ function Dashboard() {
         if (o.sdcardSpaceRemaining !== undefined) {
           results.sdcardSpaceRemaining = o.sdcardSpaceRemaining;
         }
+
+        if (o.rssiEst !== undefined) {
+          results.rssiEst = o.rssiEst;
+        }
+
+        if (o.snr !== undefined) { 
+          results.snr = o.snr;
+        }
       }
       // Update state variables with the results
       if (results.temperature !== undefined) {
@@ -200,6 +211,14 @@ function Dashboard() {
 
       if (results.sdcardSpaceRemaining !== undefined) {
         setSdcardSpaceRemaining(results.sdcardSpaceRemaining);
+      }
+
+      if (results.rssiEst !== undefined) { 
+        setRssiEst(results.rssiEst);
+      }
+
+      if (results.snr !== undefined) { 
+        setSnr(results.snr);
       }
     } catch (error) {
       console.error("Error querying InfluxDB:", error);
@@ -351,7 +370,7 @@ function Dashboard() {
 
 
                 <Grid container spacing={1}>
-                  <Grid item xs={12} lg={6} xl={6}>
+                  <Grid item xs={6} lg={4} xl={4}>
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Temperature", fontWeight: "regular" }}
@@ -377,7 +396,7 @@ function Dashboard() {
                     </VuiBox>
                   </Grid>
 
-                  <Grid item xs={12} lg={6} xl={6}>
+                  <Grid item xs={6} lg={4} xl={4}>
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Classifier Version", fontWeight: "regular" }}
@@ -402,8 +421,35 @@ function Dashboard() {
                       />
                     </VuiBox>
                   </Grid>
+
+                  <Grid item xs={6} lg={4} xl={4}>
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Radio RSSI Estimate", fontWeight: "regular" }}
+                        count={rssiEst ? parseFloat(rssiEst) : "N/A"}
+                        icon={{ color: "info", component: <GiSparkles size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Radio SNR", fontWeight: "regular" }}
+                        count={snr ? parseFloat(snr) : "N/A"}
+                        icon={{ color: "info", component: <MdOutlineAccessTimeFilled size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    {/* <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Transmission Interval", fontWeight: "regular" }}
+                        count={transmissionIntervalM ? `${parseFloat(transmissionIntervalM)} min` : "N/A"}
+                        icon={{ color: "info", component: <MdOutlineRadar size="20px" color="white" /> }}
+                      />
+                    </VuiBox> */}
+                  </Grid>
                 </Grid>
               </Grid>
+              
               <Grid item xs={12} lg={4} xl={4}>
                 <SatisfactionRate value={selectedUID != "None" ? (sdcardSpaceRemaining * 0.001).toFixed(2) : "N/A"} total={selectedUID != "None" ? (sdcardTotalSpace * 0.001).toFixed(2) : "N/A"}/>
               </Grid>
