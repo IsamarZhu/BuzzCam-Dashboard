@@ -549,7 +549,7 @@ function Dashboard() {
 
         <Card sx={{ padding: "17px" }}>
           <VuiBox display='flex' flexDirection='column'>
-            <VuiTypography variant='lg' color='white' fontWeight='bold' mb='4px'>
+            <VuiTypography variant='lg' color='white' fontWeight='bold' mb='18px'>
               Classifier Data
             </VuiTypography>
 
@@ -606,6 +606,23 @@ function Dashboard() {
                   </VuiTypography>
                 </VuiBox>
               </Grid>
+            </Grid>
+
+            <Grid container spacing={'18px'}>
+              <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                </VuiBox>
+              </Grid>
+
+              <Grid item xs={6} lg={3} xl={3}>
+              </Grid>
+
+              <Grid item xs={6} lg={3} xl={3}>
+              </Grid>
+
+              <Grid item xs={6} lg={3} xl={3}>
+              </Grid>
+
             </Grid>
           </VuiBox>
         </Card>

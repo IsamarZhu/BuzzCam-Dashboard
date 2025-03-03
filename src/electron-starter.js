@@ -33,10 +33,10 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-        preload: path.join(__dirname, 'preload.js'), // Load the preload script here
-        contextIsolation: true,
-        enableRemoteModule: false,
-        nodeIntegration: false
+            preload: path.join(__dirname, 'preload.js'), // Load the preload script here
+            contextIsolation: true,
+            enableRemoteModule: false,
+            nodeIntegration: false
         }
     });
 
@@ -47,6 +47,13 @@ function createWindow() {
         slashes: true
     });
     mainWindow.loadURL(startUrl);
+
+    // use Escape button to exit fullscreen
+    ipcMain.on("exit-fullscreen", () => {
+        if (mainWindow.isFullScreen()) {
+            mainWindow.setFullScreen(false);
+        }
+    });
 
     // mainWindow.webContents.executeJavaScript(`
     //     var path = require('path');

@@ -445,13 +445,13 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 <strong>Species 2 Count:</strong> {selectedPacket?.systemSummaryPacket?.species_2CountInterval ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Temperature:</strong> {selectedPacket?.systemSummaryPacket?.temperature ?? 'N/A'}
+                                <strong>Temperature:</strong> {(selectedPacket?.systemSummaryPacket?.temperature).toFixed(1) ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Humidity:</strong> {selectedPacket?.systemSummaryPacket?.humidity ?? 'N/A'}
+                                <strong>Relative Humidity:</strong> {(selectedPacket?.systemSummaryPacket?.humidity).toFixed(1) ?? 'N/A'} %
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Gas:</strong> {selectedPacket?.systemSummaryPacket?.gas ?? 'N/A'}
+                                <strong>Gas:</strong> {(selectedPacket?.systemSummaryPacket?.gas).toFixed(1) ?? 'N/A'}
                             </VuiTypography>
                         </div>
                     ) : (
