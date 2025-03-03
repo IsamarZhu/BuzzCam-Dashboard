@@ -30,7 +30,7 @@ import Icon from "@mui/material/Icon";
 import VuiBox from "components/VuiBox";
 
 // Vision UI Dashboard React example components
-import Sidenav from "examples/Sidenav";
+// import Sidenav from "examples/Sidenav";
 import Configurator from "examples/Configurator";
 
 // Vision UI Dashboard React themes
@@ -138,12 +138,12 @@ export default function App() {
         <CssBaseline />
         {layout === "dashboard" && (
           <>
-            <Sidenav
+            {/* <Sidenav
               color={sidenavColor}
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
-            />
+            /> */}
             <Configurator />
             {configsButton}
           </>
@@ -160,12 +160,12 @@ export default function App() {
       <CssBaseline />
       {layout === "dashboard" && (
         <>
-          <Sidenav
+          {/* <Sidenav
             color={sidenavColor}
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
-          />
+          /> */}
           <Configurator />
           {configsButton}
         </>

@@ -39,7 +39,11 @@ function initProcessProto(mainWindow, filePath) {
 
   if (os.platform() === 'win32') {
     portPath = 'COM3'; // Adjust for your COM port
-  } else {
+  } 
+  else if (os.platform() === 'linux') {
+    portPath = '/dev/ttyACM0'; // Adjust for macOS/Linux
+  }
+  else {
     portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
   } // TODO make serial port general?
 
@@ -176,11 +180,13 @@ function getCurrentPacket() {
 // Function to write to InfluxDB
 function writeToInfluxDB(packetObject, timeReceived) {
   const systemSummary = packetObject.systemSummaryPacket || {};
+  const buzzIntervalData = packetObject.systemSummaryPacket.buzzIntervalData || {};
+  const buzzSummaryData = packetObject.systemSummaryPacket.buzzSummaryData || {};
   const packetLocation = packetObject.systemSummaryPacket.location || {};
   const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
   const radioPower = packetObject.systemSummaryPacket.radioPower || {};
 
-  console.log("systemSummary.classifierVersion", systemSummary.classifierVersion)
+  console.log("buzzSummaryData.classifierVersion", buzzSummaryData.classifierVersion)
   
   const point = new Point('system_summary')
     .tag('systemUid', packetObject.header.systemUid)
@@ -189,12 +195,16 @@ function writeToInfluxDB(packetObject, timeReceived) {
     .floatField('lat', packetLocation.lat || null)
     .floatField('lon', packetLocation.lon || null)
     .floatField('elev', packetLocation.elev || null)
-    .floatField('classifierVersion', systemSummary.classifierVersion || 0)
-    .floatField('epochLastDetection', systemSummary.epochLastDetection || 0)
-    .floatField('transmissionIntervalM', systemSummary.transmissionIntervalM || 0)
-    .floatField('buzzCountInterval', systemSummary.buzzCountInterval || 0)
-    .floatField('species_1CountInterval', systemSummary.species_1CountInterval || 0)
-    .floatField('species_2CountInterval', systemSummary.species_2CountInterval || 0)
+    .floatField('classifierVersion', buzzSummaryData.classifierVersion || 0)
+    .floatField('epochLastDetectionInterval', buzzIntervalData.lastDetectionEpoch || 0)
+    .floatField('transmissionIntervalM', buzzIntervalData.transmissionIntervalM || 0)
+    .floatField('buzzCountInterval', buzzIntervalData.buzzCount || 0)
+    .floatField('species_1CountInterval', buzzIntervalData.species_1Count || 0)
+    .floatField('species_2CountInterval', buzzIntervalData.species_2Count || 0)
+    .floatField('buzzCountSummary', buzzSummaryData.buzzCounter || 0)
+    .floatField('species_1CountSummary', buzzSummaryData.species_1Count || 0)
+    .floatField('species_2CountSummary', buzzSummaryData.species_2Count || 0)
+    .floatField('epochLastDetectionSummary', buzzSummaryData.lastDetectionEpoch || 0)
     .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining || 0)
     .floatField('sdcardTotalSpace', sdcardState.totalSpace || 0)
     .floatField('radioRssi', radioPower.rssi || 0)
@@ -240,8 +250,9 @@ process.on('SIGTERM', () => {
 function saveToCsv(packetObject, csvFilePath, timeReceived) {
   const header = [
       'timeReceived', 'systemUid', 'msFromStart', 'epoch', 'lat', 'lon', 'elev',
-      'classifier_version', 'epoch_last_detection', 'transmission_interval_m', 'buzz_count_interval', 
-      'species_1_count_interval', 'species_2_count_interval',
+      'classifier_version', 'epoch_last_detection_interval', 'transmission_interval_m', 'buzz_count_interval', 
+      'species_1_count_interval', 'species_2_count_interval', 'buzz_count_summary', 
+      'species_1_count_summary', 'species_2_count_summary', 'epoch_last_detection_summary',
       'sdcardSpaceRemaining', 'sdcardTotalSpace', 
       'radioRssi', 'radioSnr', 'radioRssiEst',
       'batteryVoltage', 'temperature', 'humidity', 'gas',
@@ -252,6 +263,8 @@ function saveToCsv(packetObject, csvFilePath, timeReceived) {
   if (fs.existsSync(csvFilePath)) {
       // Extract values from packetObject, or write null if not available
     const systemSummary = packetObject.systemSummaryPacket || {};
+    const buzzIntervalData = packetObject.systemSummaryPacket.buzzIntervalData || {};
+    const buzzSummaryData = packetObject.systemSummaryPacket.buzzSummaryData || {};
     const packetLocation = packetObject.systemSummaryPacket.location || {};
     const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
     const radioPower = packetObject.systemSummaryPacket.radioPower || {};
@@ -264,12 +277,16 @@ function saveToCsv(packetObject, csvFilePath, timeReceived) {
         packetLocation.lat || null,
         packetLocation.lon || null,
         packetLocation.elev || null,
-        systemSummary.classifierVersion || null,
-        systemSummary.epochLastDetection || null,
-        systemSummary.transmissionIntervalM || null,
-        systemSummary.buzzCountInterval || null,
-        systemSummary.species_1CountInterval || null,
-        systemSummary.species_2CountInterval || null,
+        buzzSummaryData.classifierVersion || null,
+        buzzIntervalData.lastDetectionEpoch || null,
+        buzzIntervalData.transmissionIntervalM || null,
+        buzzIntervalData.buzzCount || null,
+        buzzIntervalData.species_1Count || null,
+        buzzIntervalData.species_2Count || null,
+        buzzSummaryData.buzzCounter || null,
+        buzzSummaryData.species_1Count || null,
+        buzzSummaryData.species_2Count || null,
+        buzzSummaryData.lastDetectionEpoch || null,
         sdcardState.spaceRemaining || null,
         sdcardState.totalSpace || 0,
         radioPower.rssi || null,

@@ -125,9 +125,19 @@ function Dashboard() {
   const [temperature, setTemperature] = useState("N/A");
   const [humidity, setHumidity] = useState("N/A");
   const [gas, setGas] = useState("N/A");
+
   const [classifierVersion, setClassifierVersion] = useState("N/A");
-  const [epochLastDetection, setEpochLastDetection] = useState("N/A");
+
+  const [buzzCountInterval, setBuzzCountInterval] = useState("N/A");
+  const [species1CountInterval, setSpecies1CountInterval] = useState("N/A");  
+  const [species2CountInterval, setSpecies2CountInterval] = useState("N/A");
+  const [epochLastDetectionInterval, setEpochLastDetectionInterval] = useState("N/A");
   const [transmissionIntervalM, setTransmissionIntervalM] = useState("N/A");
+
+  const [buzzCountSummary, setBuzzCountSummary] = useState("N/A");
+  const [species1CountSummary, setSpecies1CountSummary] = useState("N/A");
+  const [species2CountSummary, setSpecies2CountSummary] = useState("N/A");
+  const [epochLastDetectionSummary, setEpochLastDetectionSummary] = useState("N/A");
 
   const [rssiEst, setRssiEst] = useState("N/A");
   const [snr, setSnr] = useState("N/A");
@@ -136,6 +146,7 @@ function Dashboard() {
   const [sdcardTotalSpace, setSdcardTotalSpace] = useState("N/A");
 
   const [selectedUID, setSelectedUID] = useState("None"); // current UID that is being displayed, selected from dropdown
+  
 
   const getQuery = async () => {
     const fluxQuery = `
@@ -165,13 +176,42 @@ function Dashboard() {
         if (o.classifierVersion !== undefined) {
           results.classifierVersion = o.classifierVersion;
         }
+
+        if (o.buzzCountInterval !== undefined) {
+          results.buzzCountInterval = o.buzzCountInterval;
+        }
+
+        if (o.species1CountInterval !== undefined) {
+          results.species1CountInterval = o.species1CountInterval;
+        }
+
+        if (o.species2CountInterval !== undefined) {
+          results.species2CountInterval = o.species2CountInterval;
+        }
         
-        if (o.epochLastDetection !== undefined) {
-          results.epochLastDetection = o.epochLastDetection;
+        if (o.epochLastDetectionInterval !== undefined) {
+          results.epochLastDetectionInterval = o.epochLastDetectionInterval;
+          console.log("results.epochLastDetectionInterval", results.epochLastDetectionInterval)
         }
 
         if (o.transmissionIntervalM !== undefined) {
           results.transmissionIntervalM = o.transmissionIntervalM;
+        }
+
+        if (o.buzzCountSummary !== undefined) {
+          results.buzzCountSummary = o.buzzCountSummary;
+        }
+
+        if (o.species1CountSummary !== undefined) {
+          results.species1CountSummary = o.species1CountSummary;
+        }
+
+        if (o.species2CountSummary !== undefined) {
+          results.species2CountSummary = o.species2CountSummary;
+        }
+
+        if (o.epochLastDetectionSummary !== undefined) {
+          results.epochLastDetectionSummary = o.epochLastDetectionSummary;
         }
 
         if (o.sdcardSpaceRemaining !== undefined) {
@@ -201,12 +241,42 @@ function Dashboard() {
         setClassifierVersion(results.classifierVersion);
       }
 
-      if (results.epochLastDetection !== undefined) {
-        setEpochLastDetection(results.epochLastDetection);
+      if (results.buzzCountInterval !== undefined) {
+        setBuzzCountInterval(results.buzzCountInterval);
+      }
+
+      if (results.species1CountInterval !== undefined) {
+        setSpecies1CountInterval(results.species1CountInterval);
+      }
+
+      if (results.species2CountInterval !== undefined) {
+        setSpecies2CountInterval(results.species2CountInterval);
+      }
+
+      if (results.epochLastDetectionInterval !== undefined) {
+        setEpochLastDetectionInterval(results.epochLastDetectionInterval);
+        console.log("epochLastDetectionInterval", epochLastDetectionInterval)
       }
 
       if (results.transmissionIntervalM !== undefined) {
         setTransmissionIntervalM(results.transmissionIntervalM);
+      }
+
+      if (results.buzzCountSummary !== undefined) {
+        setBuzzCountSummary(results.buzzCountSummary);
+      }
+
+      if (results.species1CountSummary !== undefined) {
+        setSpecies1CountSummary(results.species1CountSummary);
+      }
+
+      if (results.species2CountSummary !== undefined) {
+        setSpecies2CountSummary(results.species2CountSummary);
+      }
+
+      if (results.epochLastDetectionSummary !== undefined) {
+        setEpochLastDetectionSummary(results.epochLastDetectionSummary);
+        console.log("epochLastDetectionSummary", epochLastDetectionSummary)
       }
 
       if (results.sdcardSpaceRemaining !== undefined) {
@@ -252,27 +322,32 @@ function Dashboard() {
         }));
 
         // update maxBuzzCount
-        setMaxBuzzCount(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzCountInterval));
+        setMaxBuzzCount(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.buzzCount));
         console.log("maxBuzzCount ", maxBuzzCount);
 
-        // update minBuzzCount
-        setMinBuzzCount(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzCountInterval));
+        // update minBuzzCount  
+
+        console.log(typeof packet.systemSummaryPacket.buzzIntervalData.buzzCount);
+
+        setMinBuzzCount(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.buzzCount.low));
         console.log("minBuzzCount ", minBuzzCount);
 
         // update maxSpecies1Count
-        setMaxSpecies1Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.species_1CountInterval));
+        setMaxSpecies1Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
         console.log("maxSpecies1Count ", maxSpecies1Count);
+        console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count ", packet.systemSummaryPacket.buzzIntervalData.species_1Count);
+        console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count.low ", packet.systemSummaryPacket.buzzIntervalData.species_1Count.low);
 
         // update minSpecies1Count
-        setMinSpecies1Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.species_1CountInterval));
+        setMinSpecies1Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
         console.log("minSpecies1Count ", minSpecies1Count);
 
         // update maxSpecies2Count
-        setMaxSpecies2Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.species_2CountInterval));
+        setMaxSpecies2Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
         console.log("maxSpecies2Count ", maxSpecies2Count);
 
         // update minSpecies2Count
-        setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.species_2CountInterval));
+        setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
         console.log("minSpecies2Count ", minSpecies2Count);
 
         // only requery if the current selected UID is being updated
@@ -285,6 +360,8 @@ function Dashboard() {
 
           await getQuery();
         }
+
+        console.log("packet.systemSummaryPacket.location.lat",packet.systemSummaryPacket.location.lat)
         
 
       });
@@ -348,7 +425,7 @@ function Dashboard() {
                 </VuiBox>
               </Grid>
               
-              <Grid item xs={12} lg={8} xl={4}>
+              <Grid item xs={12} lg={6} xl={6}>
                 <VuiBox mb={3} sx={{ width: '100%' }}>
                   <Select
                     value={selectedUID}
@@ -370,7 +447,7 @@ function Dashboard() {
 
 
                 <Grid container spacing={1}>
-                  <Grid item xs={6} lg={4} xl={4}>
+                  <Grid item xs={6} lg={6} xl={6}>
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Temperature", fontWeight: "regular" }}
@@ -396,7 +473,7 @@ function Dashboard() {
                     </VuiBox>
                   </Grid>
 
-                  <Grid item xs={6} lg={4} xl={4}>
+                  <Grid item xs={6} lg={6} xl={6}>
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Classifier Version", fontWeight: "regular" }}
@@ -405,24 +482,6 @@ function Dashboard() {
                       />
                     </VuiBox>
 
-                    <VuiBox mb={1} sx={{ width: '100%' }}>
-                      <MiniStatisticsCard
-                        title={{ text: "Epoch Last Detection", fontWeight: "regular" }}
-                        count={epochLastDetection ? new Date(epochLastDetection).toLocaleString() : "N/A"}
-                        icon={{ color: "info", component: <MdOutlineAccessTimeFilled size="20px" color="white" /> }}
-                      />
-                    </VuiBox>
-
-                    <VuiBox mb={1} sx={{ width: '100%' }}>
-                      <MiniStatisticsCard
-                        title={{ text: "Transmission Interval", fontWeight: "regular" }}
-                        count={transmissionIntervalM ? `${parseFloat(transmissionIntervalM)} min` : "N/A"}
-                        icon={{ color: "info", component: <MdOutlineRadar size="20px" color="white" /> }}
-                      />
-                    </VuiBox>
-                  </Grid>
-
-                  <Grid item xs={6} lg={4} xl={4}>
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Radio RSSI Estimate", fontWeight: "regular" }}
@@ -441,22 +500,116 @@ function Dashboard() {
 
                     {/* <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
+                        title={{ text: "Epoch Last Detection", fontWeight: "regular" }}
+                        count={epochLastDetectionInterval ? new Date(epochLastDetectionInterval * 1000).toLocaleString() : "N/A"}
+                        icon={{ color: "info", component: <MdOutlineAccessTimeFilled size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
                         title={{ text: "Transmission Interval", fontWeight: "regular" }}
                         count={transmissionIntervalM ? `${parseFloat(transmissionIntervalM)} min` : "N/A"}
                         icon={{ color: "info", component: <MdOutlineRadar size="20px" color="white" /> }}
                       />
                     </VuiBox> */}
                   </Grid>
+
+                  {/* <Grid item xs={6} lg={4} xl={4}>
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Radio RSSI Estimate", fontWeight: "regular" }}
+                        count={rssiEst ? parseFloat(rssiEst) : "N/A"}
+                        icon={{ color: "info", component: <GiSparkles size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Radio SNR", fontWeight: "regular" }}
+                        count={snr ? parseFloat(snr) : "N/A"}
+                        icon={{ color: "info", component: <MdOutlineAccessTimeFilled size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+                  </Grid> */}
                 </Grid>
               </Grid>
-              
-              <Grid item xs={12} lg={4} xl={4}>
+
+              <Grid item xs={12} lg={6} xl={6}>
                 <SatisfactionRate value={selectedUID != "None" ? (sdcardSpaceRemaining * 0.001).toFixed(2) : "N/A"} total={selectedUID != "None" ? (sdcardTotalSpace * 0.001).toFixed(2) : "N/A"}/>
               </Grid>
             </Grid>
           </VuiBox>
         </VuiBox>
 
+
+
+
+        <VuiBox mb={3}>
+
+        <Card sx={{ padding: "17px" }}>
+          <VuiBox display='flex' flexDirection='column'>
+            <VuiTypography variant='lg' color='white' fontWeight='bold' mb='4px'>
+              Classifier Data
+            </VuiTypography>
+
+
+            <Grid container spacing={'18px'}>
+              <Grid item xs={12} lg={6} xl={6}> 
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
+                    <strong> Interval Data</strong>
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Buzz Count:</strong> {buzzCountInterval ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Species 1 Count:</strong> {species1CountInterval ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Species 2 Count:</strong> {species2CountInterval ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Last detection epoch:</strong> {new Date(epochLastDetectionInterval * 1000).toLocaleString() ?? 'N/A'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>transmissionIntervalM:</strong> {transmissionIntervalM ?? 'N/A'}
+                  </VuiTypography>
+                </VuiBox>
+              </Grid>
+              
+              <Grid item xs={12} lg={6} xl={6}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
+                    <strong> Summary Data</strong>
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Buzz Count:</strong> {buzzCountSummary ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Species 1 Count:</strong> {species1CountSummary ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Species 2 Count:</strong> {species2CountSummary ?? '0'}
+                  </VuiTypography>
+
+                  <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
+                      <strong>Last detection epoch:</strong> {new Date(epochLastDetectionSummary * 1000).toLocaleString() ?? 'N/A'}
+                  </VuiTypography>
+                </VuiBox>
+              </Grid>
+            </Grid>
+          </VuiBox>
+        </Card>
+        </VuiBox>
         
         <VuiBox sx={{ height: "100%", paddingBottom: "20px" }}>
           <OfflineMap lastPackets={lastPackets} maxBuzzCount={maxBuzzCount} minBuzzCount={minBuzzCount} maxSpecies1Count={maxSpecies1Count} minSpecies1Count={minSpecies1Count} maxSpecies2Count={maxSpecies2Count} minSpecies2Count={minSpecies2Count}/>

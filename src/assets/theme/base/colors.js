@@ -912,8 +912,8 @@ export default {
 
     cardContent: {
       deg: "126.97",
-      main: "rgb(109, 83, 58) 28.26%", // Deep olive
-      state: "rgb(52, 61, 44) 91.2%", // Muted forest green
+      main: "rgb(92, 75, 60) 28.26%", // Deep olive
+      state: "rgb(76, 93, 116) 91.2%", // Muted forest green
     },
     
     box: {
