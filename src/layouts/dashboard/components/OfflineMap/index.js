@@ -276,24 +276,27 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
     const getOpacity = (packet) => {
         switch (selectedOption) {
             case "species1Count":
-                return parseFloat(packet.systemSummaryPacket.species_1CountInterval - minSpecies1Count) / (maxSpecies1Count - minSpecies1Count);
+                console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count.low", packet.systemSummaryPacket.buzzIntervalData.species_1Count.low);
+                return parseFloat(packet.systemSummaryPacket.buzzIntervalData.species_1Count.low - minSpecies1Count) / (maxSpecies1Count - minSpecies1Count);
             case "species2Count":
-                return parseFloat(packet.systemSummaryPacket.species_2CountInterval - minSpecies2Count) / (maxSpecies2Count - minSpecies2Count);
+                console.log("packet.systemSummaryPacket.buzzIntervalData.species_2Count.low", packet.systemSummaryPacket.buzzIntervalData.species_2Count.low);
+                return parseFloat(packet.systemSummaryPacket.buzzIntervalData.species_2Count.low - minSpecies2Count) / (maxSpecies2Count - minSpecies2Count);
             case "totalBuzzCount":
+                console.log("packet.systemSummaryPacket.buzzIntervalData.buzzCount.low", packet.systemSummaryPacket.buzzIntervalData.buzzCount.low);
             default:
-                return parseFloat(packet.systemSummaryPacket.buzzCountInterval - minBuzzCount) / (maxBuzzCount - minBuzzCount);
+                return parseFloat(packet.systemSummaryPacket.buzzIntervalData.buzzCount.low - minBuzzCount) / (maxBuzzCount - minBuzzCount);
         }
     };
 
     const getBuzzCount = (packet) => {
         switch (selectedOption) {
             case "species1Count":
-                return packet.systemSummaryPacket.species_1CountInterval;
+                return packet.systemSummaryPacket.buzzIntervalData.species_1Count.low;
             case "species2Count":
-                return packet.systemSummaryPacket.species_2CountInterval;
+                return packet.systemSummaryPacket.buzzIntervalData.species_2Count.low;
             case "totalBuzzCount":
             default:
-                return packet.systemSummaryPacket.buzzCountInterval;
+                return packet.systemSummaryPacket.buzzIntervalData.buzzCount.low;
         }
     };
 
@@ -324,8 +327,13 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 console.log("in map, packet.systemSummaryPacket.location.lat / 10000000", packet.systemSummaryPacket.location.lat / 10000000)
                                 console.log("in map, packet.systemSummaryPacket.location.lon / 10000000", packet.systemSummaryPacket.location.lon / 10000000)
                                 // console.log("buzzCountInterval ", packet.systemSummaryPacket.buzzCountInterval);
-                                // console.log("maxBuzzCount ", maxBuzzCount);
-                                // console.log("minBuzzCount ", minBuzzCount);
+                                console.log("maxBuzzCount ", maxBuzzCount);
+                                console.log("minBuzzCount ", minBuzzCount);
+                                console.log("maxSpecies1Count ", maxSpecies1Count);
+                                console.log("minSpecies1Count ", minSpecies1Count); 
+                                console.log("maxSpecies2Count ", maxSpecies2Count);
+                                console.log("minSpecies2Count ", minSpecies2Count);
+
                                 console.log("opacity ", getOpacity(packet));
 
                                 if (!isNaN(getOpacity(packet))) { // only push larger circle if we have a valid opacity
@@ -421,7 +429,7 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 <strong>UID:</strong> {selectedPacket?.header?.systemUid ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Buzz Count:</strong> {selectedPacket?.systemSummaryPacket?.buzzCountInterval ?? 'N/A'}
+                                <strong>Buzz Count:</strong> {selectedPacket?.systemSummaryPacket?.buzzIntervalData.buzzCount.low ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
                                 <strong>Latitude:</strong> {selectedPacket?.systemSummaryPacket?.location?.lat ?? 'N/A'}
@@ -439,10 +447,10 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 <strong>Transmission Interval M:</strong> {selectedPacket?.systemSummaryPacket?.trasmissionIntervalM ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Species 1 Count:</strong> {selectedPacket?.systemSummaryPacket?.species_1CountInterval ?? 'N/A'}
+                                <strong>Species 1 Count:</strong> {selectedPacket?.systemSummaryPacket?.buzzIntervalData.species_1Count.low ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Species 2 Count:</strong> {selectedPacket?.systemSummaryPacket?.species_2CountInterval ?? 'N/A'}
+                                <strong>Species 2 Count:</strong> {selectedPacket?.systemSummaryPacket?.buzzIntervalData.species_2Count.low ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
                                 <strong>Temperature:</strong> {(selectedPacket?.systemSummaryPacket?.temperature).toFixed(1) ?? 'N/A'}

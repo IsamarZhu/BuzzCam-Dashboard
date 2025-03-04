@@ -18,6 +18,8 @@
 
 // @mui material components
 import Grid from "@mui/material/Grid";
+import { TextField } from '@mui/material';
+
 import Icon from "@mui/material/Icon";
 import { Card, LinearProgress, Stack, Select, MenuItem } from "@mui/material";
 
@@ -321,34 +323,34 @@ function Dashboard() {
           [currentUID]: packet
         }));
 
-        // update maxBuzzCount
-        setMaxBuzzCount(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.buzzCount));
-        console.log("maxBuzzCount ", maxBuzzCount);
+        // // update maxBuzzCount
+        // setMaxBuzzCount(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.buzzCount));
+        // console.log("maxBuzzCount ", maxBuzzCount);
 
-        // update minBuzzCount  
+        // // update minBuzzCount  
 
-        console.log(typeof packet.systemSummaryPacket.buzzIntervalData.buzzCount);
+        // console.log(typeof packet.systemSummaryPacket.buzzIntervalData.buzzCount);
 
-        setMinBuzzCount(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.buzzCount.low));
-        console.log("minBuzzCount ", minBuzzCount);
+        // setMinBuzzCount(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.buzzCount.low));
+        // console.log("minBuzzCount ", minBuzzCount);
 
-        // update maxSpecies1Count
-        setMaxSpecies1Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
-        console.log("maxSpecies1Count ", maxSpecies1Count);
-        console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count ", packet.systemSummaryPacket.buzzIntervalData.species_1Count);
-        console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count.low ", packet.systemSummaryPacket.buzzIntervalData.species_1Count.low);
+        // // update maxSpecies1Count
+        // setMaxSpecies1Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
+        // console.log("maxSpecies1Count ", maxSpecies1Count);
+        // console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count ", packet.systemSummaryPacket.buzzIntervalData.species_1Count);
+        // console.log("packet.systemSummaryPacket.buzzIntervalData.species_1Count.low ", packet.systemSummaryPacket.buzzIntervalData.species_1Count.low);
 
-        // update minSpecies1Count
-        setMinSpecies1Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
-        console.log("minSpecies1Count ", minSpecies1Count);
+        // // update minSpecies1Count
+        // setMinSpecies1Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_1Count.low));
+        // console.log("minSpecies1Count ", minSpecies1Count);
 
-        // update maxSpecies2Count
-        setMaxSpecies2Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
-        console.log("maxSpecies2Count ", maxSpecies2Count);
+        // // update maxSpecies2Count
+        // setMaxSpecies2Count(prevMax => Math.max(prevMax, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
+        // console.log("maxSpecies2Count ", maxSpecies2Count);
 
-        // update minSpecies2Count
-        setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
-        console.log("minSpecies2Count ", minSpecies2Count);
+        // // update minSpecies2Count
+        // setMinSpecies2Count(prevMin => Math.min(prevMin, packet.systemSummaryPacket.buzzIntervalData.species_2Count.low));
+        // console.log("minSpecies2Count ", minSpecies2Count);
 
         // only requery if the current selected UID is being updated
         console.log("selectedUID ", selectedUID);
@@ -407,6 +409,10 @@ function Dashboard() {
     const newUID = event.target.value;
     console.log("Selected UID new: ", newUID);
     setSelectedUID(newUID); // Update the selected chart based on dropdown selection
+  };
+
+  const handleInputChange = (setter) => (event) => {
+    setter(Number(event.target.value));
   };
 
 
@@ -555,8 +561,8 @@ function Dashboard() {
 
 
             <Grid container spacing={'18px'}>
-              <Grid item xs={12} lg={6} xl={6}> 
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+              <Grid item xs={6} lg={6} xl={6}> 
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#31271c', '#2a4643', cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
                   <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
                     <strong> Interval Data</strong>
                   </VuiTypography>
@@ -583,8 +589,8 @@ function Dashboard() {
                 </VuiBox>
               </Grid>
               
-              <Grid item xs={12} lg={6} xl={6}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+              <Grid item xs={6} lg={6} xl={6}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#31271c', '#2a4643', cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
                   <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
                     <strong> Summary Data</strong>
                   </VuiTypography>
@@ -611,16 +617,80 @@ function Dashboard() {
             <Grid container spacing={'18px'}>
               <Grid item xs={6} lg={3} xl={3}>
                 <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Max Buzz Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={maxBuzzCount}
+                    onChange={handleInputChange(setMaxBuzzCount)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
                 </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Min Buzz Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={minBuzzCount}
+                    onChange={handleInputChange(setMinBuzzCount)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
+                </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Max Species 1 Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={maxSpecies1Count}
+                    onChange={handleInputChange(setMaxSpecies1Count)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
+                </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Min Species 1 Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={minSpecies1Count}
+                    onChange={handleInputChange(setMinSpecies1Count)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
+                </VuiBox>
+              </Grid>
+
+              <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Max Species 2 Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={maxSpecies2Count}
+                    onChange={handleInputChange(setMaxSpecies2Count)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
+                </VuiBox>
+              </Grid>
+
+              <Grid item xs={6} lg={3} xl={3}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white">Min Species 2 Count</VuiTypography>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    value={minSpecies2Count}
+                    onChange={handleInputChange(setMinSpecies2Count)}
+                    inputProps={{ style: { color: 'black' } }}
+                  />
+                </VuiBox>
               </Grid>
 
             </Grid>

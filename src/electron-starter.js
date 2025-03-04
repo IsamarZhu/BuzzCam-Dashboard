@@ -50,9 +50,10 @@ function createWindow() {
 
     // use Escape button to exit fullscreen
     ipcMain.on("exit-fullscreen", () => {
-        if (mainWindow.isFullScreen()) {
-            mainWindow.setFullScreen(false);
-        }
+        // if (mainWindow.isFullScreen()) {
+        //     mainWindow.setFullScreen(false);
+        // }
+        mainWindow.setFullScreen(false);
     });
 
     // mainWindow.webContents.executeJavaScript(`
@@ -67,7 +68,7 @@ function createWindow() {
     //   `);
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.webContents.on('did-finish-load', async () => {
         if (!filePath) {

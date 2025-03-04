@@ -198,14 +198,14 @@ function writeToInfluxDB(packetObject, timeReceived) {
     .floatField('classifierVersion', buzzSummaryData.classifierVersion || 0)
     .floatField('epochLastDetectionInterval', buzzIntervalData.lastDetectionEpoch || 0)
     .floatField('transmissionIntervalM', buzzIntervalData.transmissionIntervalM || 0)
-    .floatField('buzzCountInterval', buzzIntervalData.buzzCount || 0)
-    .floatField('species_1CountInterval', buzzIntervalData.species_1Count || 0)
-    .floatField('species_2CountInterval', buzzIntervalData.species_2Count || 0)
-    .floatField('buzzCountSummary', buzzSummaryData.buzzCounter || 0)
-    .floatField('species_1CountSummary', buzzSummaryData.species_1Count || 0)
-    .floatField('species_2CountSummary', buzzSummaryData.species_2Count || 0)
+    .floatField('buzzCountInterval', buzzIntervalData.buzzCount.low || 0)
+    .floatField('species_1CountInterval', buzzIntervalData.species_1Count.low || 0)
+    .floatField('species_2CountInterval', buzzIntervalData.species_2Count.low || 0)
+    .floatField('buzzCountSummary', buzzSummaryData.buzzCounter.low || 0)
+    .floatField('species_1CountSummary', buzzSummaryData.species_1Count.low || 0)
+    .floatField('species_2CountSummary', buzzSummaryData.species_2Count.low || 0)
     .floatField('epochLastDetectionSummary', buzzSummaryData.lastDetectionEpoch || 0)
-    .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining || 0)
+    .floatField('sdcardSpaceRemaining', sdcardState.spaceRemaining.low || 0)
     .floatField('sdcardTotalSpace', sdcardState.totalSpace || 0)
     .floatField('radioRssi', radioPower.rssi || 0)
     .floatField('radioSnr', radioPower.snr || 0)
@@ -280,12 +280,12 @@ function saveToCsv(packetObject, csvFilePath, timeReceived) {
         buzzSummaryData.classifierVersion || null,
         buzzIntervalData.lastDetectionEpoch || null,
         buzzIntervalData.transmissionIntervalM || null,
-        buzzIntervalData.buzzCount || null,
-        buzzIntervalData.species_1Count || null,
-        buzzIntervalData.species_2Count || null,
-        buzzSummaryData.buzzCounter || null,
-        buzzSummaryData.species_1Count || null,
-        buzzSummaryData.species_2Count || null,
+        buzzIntervalData.buzzCount.low || null,
+        buzzIntervalData.species_1Count.low || null,
+        buzzIntervalData.species_2Count.low || null,
+        buzzSummaryData.buzzCounter.low || null,
+        buzzSummaryData.species_1Count.low || null,
+        buzzSummaryData.species_2Count.low || null,
         buzzSummaryData.lastDetectionEpoch || null,
         sdcardState.spaceRemaining || null,
         sdcardState.totalSpace || 0,

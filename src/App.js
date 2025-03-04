@@ -18,6 +18,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 
+import screenfull from 'screenfull';
+
 // react-router components
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 
@@ -65,21 +67,47 @@ export default function App() {
     setRtlCache(cacheRtl);
   }, []);
 
-  // Open sidenav when mouse enter on mini sidenav
-  const handleOnMouseEnter = () => {
-    if (miniSidenav && !onMouseEnter) {
-      setMiniSidenav(dispatch, false);
-      setOnMouseEnter(true);
-    }
-  };
+  // // Open sidenav when mouse enter on mini sidenav
+  // const handleOnMouseEnter = () => {
+  //   if (miniSidenav && !onMouseEnter) {
+  //     setMiniSidenav(dispatch, false);
+  //     setOnMouseEnter(true);
+  //   }
+  // };
 
-  // Close sidenav when mouse leave mini sidenav
-  const handleOnMouseLeave = () => {
-    if (onMouseEnter) {
-      setMiniSidenav(dispatch, true);
-      setOnMouseEnter(false);
-    }
-  };
+  // // Close sidenav when mouse leave mini sidenav
+  // const handleOnMouseLeave = () => {
+  //   if (onMouseEnter) {
+  //     setMiniSidenav(dispatch, true);
+  //     setOnMouseEnter(false);
+  //   }
+  // };
+
+  // Exit fullscreen when pressing the escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+        if (e.key === '7') {
+          console.log('pressing 7');
+          if (screenfull.isEnabled) {
+            console.log('screenfull is enabled');
+            if (screenfull.isFullscreen) {
+              console.log('is fullscreen');
+              screenfull.exit();
+            } else {
+              console.log('not fullscreen');
+            }
+          } else {
+            console.log('screenfull is not enabled');
+          }
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
