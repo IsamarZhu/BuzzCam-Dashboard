@@ -368,10 +368,10 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                     <CircleMarker
                                             key={`${renderTrigger}-${index}`} // Use renderTrigger and index to force re-render
                                             center={[packet.systemSummaryPacket.location.lat / 10000000, packet.systemSummaryPacket.location.lon / 10000000]}
-                                            radius={10} // Set a visible radius
+                                            radius={5} // Set a visible radius
                                             weight={1}
                                             opacity={1}
-                                            color="#ff0000"
+                                            color="#df6100"
                                             eventHandlers={{
                                                 click: () => {
                                                     setSelectedPacket(packet);

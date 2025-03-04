@@ -27,6 +27,8 @@ import { Card, LinearProgress, Stack, Select, MenuItem } from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiProgress from "components/VuiProgress";
+import VuiInput from "components/VuiInput";
+
 
 // Vision UI Dashboard React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -116,13 +118,13 @@ function Dashboard() {
   const [lastPackets, setLastPackets] = useState({}); // dictionary to store last packet from each device, keyed by UID
 
   const [maxBuzzCount, setMaxBuzzCount] = useState(0); // keep track of the max buzz count so far
-  const [minBuzzCount, setMinBuzzCount] = useState(Infinity); // keep track of the min buzz count so far
+  const [minBuzzCount, setMinBuzzCount] = useState(0); // keep track of the min buzz count so far
 
   const [maxSpecies1Count, setMaxSpecies1Count] = useState(0);
-  const [minSpecies1Count, setMinSpecies1Count] = useState(Infinity);
+  const [minSpecies1Count, setMinSpecies1Count] = useState(0);
 
   const [maxSpecies2Count, setMaxSpecies2Count] = useState(0);
-  const [minSpecies2Count, setMinSpecies2Count] = useState(Infinity);
+  const [minSpecies2Count, setMinSpecies2Count] = useState(0);
 
   const [temperature, setTemperature] = useState("N/A");
   const [humidity, setHumidity] = useState("N/A");
@@ -584,7 +586,7 @@ function Dashboard() {
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
-                      <strong>transmissionIntervalM:</strong> {transmissionIntervalM ?? 'N/A'}
+                      <strong>Transmission Interval (mins):</strong> {transmissionIntervalM ?? 'N/A'}
                   </VuiTypography>
                 </VuiBox>
               </Grid>
@@ -618,13 +620,22 @@ function Dashboard() {
               <Grid item xs={6} lg={3} xl={3}>
                 <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
                   <VuiTypography variant="h6" color="white">Max Buzz Count</VuiTypography>
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={maxBuzzCount}
                     onChange={handleInputChange(setMaxBuzzCount)}
                     inputProps={{ style: { color: 'black' } }}
-                  />
+                  /> */}
+
+                <VuiInput
+                  placeholder="0"
+                  value={maxBuzzCount}
+                  onChange={handleInputChange(setMaxBuzzCount)}
+                  sx={{
+                    backgroundColor: "info.main !important",
+                  }}
+                />
                 </VuiBox>
               </Grid>
 
@@ -704,31 +715,44 @@ function Dashboard() {
       </VuiBox>
             
       <VuiBox>
-        <Grid container spacing={1} direction="row" justifyContent="center" alignItems="stretch">
-          <Grid item xs={12} md={6} lg={4}>
-            <VuiBox>
-              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
-                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&panelId=1&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>        
-              </div>
-            </VuiBox>
-          </Grid>
+        <Card sx={{ padding: "17px" }}>
+          <VuiBox display='flex' flexDirection='column'>
+            <VuiTypography variant='lg' color='white' fontWeight='bold' mb='10px'>
+              Visualizations
+            </VuiTypography>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <VuiBox>
-              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
-                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&theme=dark&panelId=3&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>
-              </div>
-            </VuiBox>
-          </Grid>
+            <VuiTypography variant='button' color='white' fontWeight='bold' mb='18px'>
+              Click and drag to zoom in on the graphs, double-click to zoom out
+            </VuiTypography>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <VuiBox>
-              <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
-                <iframe src="http://localhost:3000/d-solo/cebmelc9br4sgf/buzzcam-dashboard?orgId=1&timezone=browser&panelId=2&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>        
-              </div>
-            </VuiBox>
-          </Grid>
+            <Grid container spacing={1} direction="row" justifyContent="center" alignItems="stretch">
+            <Grid item xs={12} md={6} lg={4}>
+              <VuiBox>
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                  <iframe src="http://buzzcam.media.mit.edu:3000/d-solo/beeda8oj4mtq8a/buzzcam-dashboard?orgId=1&timezone=browser&panelId=3&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>              
+                </div>
+              </VuiBox>
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={4}>
+              <VuiBox> 
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                <iframe src="http://buzzcam.media.mit.edu:3000/d-solo/beeda8oj4mtq8a/buzzcam-dashboard?orgId=1&timezone=browser&panelId=2&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>
+                </div>
+              </VuiBox>
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={4}>
+              <VuiBox>
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "20px 0" }}>
+                  <iframe src="http://buzzcam.media.mit.edu:3000/d-solo/beeda8oj4mtq8a/buzzcam-dashboard?orgId=1&timezone=browser&panelId=1&__feature.dashboardSceneSolo" width="100%" height="500" frameborder="0"></iframe>        
+                </div>
+              </VuiBox>
+            </Grid>
         </Grid>
+          </VuiBox>
+        </Card>
+        
       </VuiBox>
       
       <Footer />

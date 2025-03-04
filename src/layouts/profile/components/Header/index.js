@@ -134,7 +134,7 @@ function Header() {
               </VuiTypography>
             </VuiBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={6.5} xl={6} xxl={4} sx={{ ml: "auto" }}>
+          {/* <Grid item xs={12} md={6} lg={6.5} xl={6} xxl={4} sx={{ ml: "auto" }}>
             <AppBar position="static">
               <Tabs
                 orientation={tabsOrientation}
@@ -147,7 +147,7 @@ function Header() {
                 <Tab label="PROJECTS" icon={<IoBuild color="white" size="16px" />} />
               </Tabs>
             </AppBar>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Card>
     </VuiBox>
