@@ -65,6 +65,10 @@ import { IoPaw } from "react-icons/io5";
 import { RiWaterPercentFill } from "react-icons/ri";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { MdOutlineRadar } from "react-icons/md";
+import { MdAccessTimeFilled } from "react-icons/md";
+import { FiBatteryCharging } from "react-icons/fi";
+import { MdSignalCellularAlt } from "react-icons/md";
+import { LuRadioReceiver } from "react-icons/lu";
 
 
 
@@ -149,6 +153,9 @@ function Dashboard() {
   const [sdcardSpaceRemaining, setSdcardSpaceRemaining] = useState("N/A");
   const [sdcardTotalSpace, setSdcardTotalSpace] = useState("N/A");
 
+  const [msFromStart, setMsFromStart] = useState(0);
+  const [batteryVoltage, setBatteryVoltage] = useState(0);
+
   const [selectedUID, setSelectedUID] = useState("None"); // current UID that is being displayed, selected from dropdown
   
 
@@ -229,6 +236,14 @@ function Dashboard() {
         if (o.snr !== undefined) { 
           results.snr = o.snr;
         }
+
+        if (o.msFromStart !== undefined) {
+          results.msFromStart = o.msFromStart;
+        }
+
+        if (o.batteryVoltage !== undefined) {
+          results.batteryVoltage = o.batteryVoltage;
+        }
       }
       // Update state variables with the results
       if (results.temperature !== undefined) {
@@ -293,6 +308,14 @@ function Dashboard() {
 
       if (results.snr !== undefined) { 
         setSnr(results.snr);
+      }
+
+      if (results.msFromStart !== undefined) {
+        setMsFromStart(results.msFromStart);
+      }
+
+      if (results.batteryVoltage !== undefined) {
+        setBatteryVoltage(results.batteryVoltage);
       }
     } catch (error) {
       console.error("Error querying InfluxDB:", error);
@@ -420,7 +443,7 @@ function Dashboard() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      {/* <DashboardNavbar /> */}
       <VuiBox py={3}>
         <VuiBox mb={3}>
 
@@ -479,6 +502,14 @@ function Dashboard() {
                         icon={{ color: "info", component: <PiWindBold size="20px" color="white" /> }}
                       />
                     </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Runtime", fontWeight: "regular" }}
+                        count={msFromStart ? (parseFloat(msFromStart) / 60000).toFixed(1) : "N/A"}
+                        icon={{ color: "info", component: <MdAccessTimeFilled size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
                   </Grid>
 
                   <Grid item xs={6} lg={6} xl={6}>
@@ -494,7 +525,7 @@ function Dashboard() {
                       <MiniStatisticsCard
                         title={{ text: "Radio RSSI Estimate", fontWeight: "regular" }}
                         count={rssiEst ? parseFloat(rssiEst) : "N/A"}
-                        icon={{ color: "info", component: <GiSparkles size="20px" color="white" /> }}
+                        icon={{ color: "info", component: <LuRadioReceiver size="20px" color="white" /> }}
                       />
                     </VuiBox>
 
@@ -502,7 +533,15 @@ function Dashboard() {
                       <MiniStatisticsCard
                         title={{ text: "Radio SNR", fontWeight: "regular" }}
                         count={snr ? parseFloat(snr) : "N/A"}
-                        icon={{ color: "info", component: <MdOutlineAccessTimeFilled size="20px" color="white" /> }}
+                        icon={{ color: "info", component: <MdSignalCellularAlt size="20px" color="white" /> }}
+                      />
+                    </VuiBox>
+
+                    <VuiBox mb={1} sx={{ width: '100%' }}>
+                      <MiniStatisticsCard
+                        title={{ text: "Runtime", fontWeight: "regular" }}
+                        count={batteryVoltage ? (parseFloat(batteryVoltage)).toFixed(2) : "N/A"}
+                        icon={{ color: "info", component: <FiBatteryCharging size="20px" color="white" /> }}
                       />
                     </VuiBox>
 
@@ -618,8 +657,8 @@ function Dashboard() {
 
             <Grid container spacing={'18px'}>
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Max Buzz Count</VuiTypography>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Max Buzz Count</VuiTypography>
                   {/* <TextField
                     fullWidth
                     variant="outlined"
@@ -640,67 +679,111 @@ function Dashboard() {
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Min Buzz Count</VuiTypography>
-                  <TextField
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Min Buzz Count</VuiTypography>
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={minBuzzCount}
                     onChange={handleInputChange(setMinBuzzCount)}
                     inputProps={{ style: { color: 'black' } }}
-                  />
+                  /> */}
+
+                <VuiInput
+                  placeholder="0"
+                  value={minBuzzCount}
+                  onChange={handleInputChange(setMinBuzzCount)}
+                  sx={{
+                    backgroundColor: "info.main !important",
+                  }}
+                />
                 </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Max Species 1 Count</VuiTypography>
-                  <TextField
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Max Species 1 Count</VuiTypography>
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={maxSpecies1Count}
                     onChange={handleInputChange(setMaxSpecies1Count)}
                     inputProps={{ style: { color: 'black' } }}
+                  /> */}
+
+                  <VuiInput
+                    placeholder="0"
+                    value={maxSpecies1Count}
+                    onChange={handleInputChange(setMaxSpecies1Count)}
+                    sx={{
+                      backgroundColor: "info.main !important",
+                    }}
                   />
                 </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Min Species 1 Count</VuiTypography>
-                  <TextField
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Min Species 1 Count</VuiTypography>
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={minSpecies1Count}
                     onChange={handleInputChange(setMinSpecies1Count)}
                     inputProps={{ style: { color: 'black' } }}
+                  /> */}
+
+                  <VuiInput
+                    placeholder="0"
+                    value={minSpecies1Count}
+                    onChange={handleInputChange(setMinSpecies1Count)}
+                    sx={{
+                      backgroundColor: "info.main !important",
+                    }}
                   />
                 </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Max Species 2 Count</VuiTypography>
-                  <TextField
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Max Species 2 Count</VuiTypography>
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={maxSpecies2Count}
                     onChange={handleInputChange(setMaxSpecies2Count)}
                     inputProps={{ style: { color: 'black' } }}
-                  />
+                  /> */}
+
+                    <VuiInput
+                      placeholder="0"
+                      value={maxSpecies2Count}
+                      onChange={handleInputChange(setMaxSpecies2Count)}
+                      sx={{
+                        backgroundColor: "info.main !important",
+                      }}
+                    />
                 </VuiBox>
               </Grid>
 
               <Grid item xs={6} lg={3} xl={3}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient(cardContent.main, cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
-                  <VuiTypography variant="h6" color="white">Min Species 2 Count</VuiTypography>
-                  <TextField
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#5c75a7', cardContent.state, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                  <VuiTypography variant="h6" color="white" mb={'10px'}>Min Species 2 Count</VuiTypography>
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     value={minSpecies2Count}
                     onChange={handleInputChange(setMinSpecies2Count)}
                     inputProps={{ style: { color: 'black' } }}
-                  />
+                  /> */}
+                  <VuiInput
+                      placeholder="0"
+                      value={minSpecies2Count}
+                      onChange={handleInputChange(setMinSpecies2Count)}
+                      sx={{
+                        backgroundColor: "info.main !important",
+                      }}
+                    />
                 </VuiBox>
               </Grid>
 
@@ -721,7 +804,7 @@ function Dashboard() {
               Visualizations
             </VuiTypography>
 
-            <VuiTypography variant='button' color='white' fontWeight='bold' mb='18px'>
+            <VuiTypography variant='button' color='white' fontWeight='regular' mb='18px'>
               Click and drag to zoom in on the graphs, double-click to zoom out
             </VuiTypography>
 

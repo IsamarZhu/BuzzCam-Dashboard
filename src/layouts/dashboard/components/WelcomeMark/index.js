@@ -25,7 +25,9 @@ const WelcomeMark = () => {
         height: '100%', 
       }}>
         <VuiBox>
-          <VuiTypography color="white" variant="h2" fontWeight="bold" mb="18px">
+          <VuiTypography color="white" variant="h2" fontWeight="bold" mb="18px" sx={{
+              textShadow: '5px 5px 5px rgba(79, 105, 129, 0.7)', // Slight dark blue shadow
+            }}>
             BuzzCam Dashboard
           </VuiTypography>
         </VuiBox>
