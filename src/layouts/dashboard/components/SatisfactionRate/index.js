@@ -20,7 +20,7 @@ const SatisfactionRate = ({ value, total }) => {
 				<VuiTypography variant='lg' color='white' fontWeight='bold' mb='4px'>
 					SD Card State
 				</VuiTypography>
-				<VuiTypography variant='button' color='text' fontWeight='regular' mb='20px'>
+				<VuiTypography variant='h6' color='text' fontWeight='regular' mb='20px'>
 					Space remaining in card:
 				</VuiTypography>
 				<VuiBox sx={{ alignSelf: 'center', justifySelf: 'center', zIndex: '-1' }}>

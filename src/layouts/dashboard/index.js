@@ -539,7 +539,7 @@ function Dashboard() {
 
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
-                        title={{ text: "Runtime", fontWeight: "regular" }}
+                        title={{ text: "Battery voltage", fontWeight: "regular" }}
                         count={batteryVoltage ? (parseFloat(batteryVoltage)).toFixed(2) : "N/A"}
                         icon={{ color: "info", component: <FiBatteryCharging size="20px" color="white" /> }}
                       />
@@ -603,7 +603,7 @@ function Dashboard() {
 
             <Grid container spacing={'18px'}>
               <Grid item xs={6} lg={6} xl={6}> 
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#31271c', '#2a4643', cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#644531', cardContent.main, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
                   <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
                     <strong> Interval Data</strong>
                   </VuiTypography>
@@ -631,7 +631,7 @@ function Dashboard() {
               </Grid>
               
               <Grid item xs={6} lg={6} xl={6}>
-                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#31271c', '#2a4643', cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
+                <VuiBox mb={1} sx={{ width: '100%', background: linearGradient('#644531', cardContent.main, cardContent.deg), padding: '18px 22px', borderRadius: '20px',}}>
                   <VuiTypography variant='h6' color='text' fontWeight='regular' mb='10px'>
                     <strong> Summary Data</strong>
                   </VuiTypography>
