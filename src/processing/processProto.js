@@ -184,7 +184,7 @@ function writeToInfluxDB(packetObject, timeReceived) {
   const buzzSummaryData = packetObject.systemSummaryPacket.buzzSummaryData || {};
   const packetLocation = packetObject.systemSummaryPacket.location || {};
   const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
-  const radioPower = packetObject.systemSummaryPacket.radioPower || {};
+  const radioPower = packetObject.radioPower || {};
 
   console.log("buzzSummaryData.classifierVersion", buzzSummaryData.classifierVersion)
   
@@ -267,7 +267,7 @@ function saveToCsv(packetObject, csvFilePath, timeReceived) {
     const buzzSummaryData = packetObject.systemSummaryPacket.buzzSummaryData || {};
     const packetLocation = packetObject.systemSummaryPacket.location || {};
     const sdcardState = packetObject.systemSummaryPacket.sdCard || {};
-    const radioPower = packetObject.systemSummaryPacket.radioPower || {};
+    const radioPower = packetObject.radioPower || {};
 
     const row = [
         timeReceived || null,
