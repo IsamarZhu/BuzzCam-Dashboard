@@ -215,10 +215,12 @@ function Dashboard() {
 
         if (o.species_1CountSummary !== undefined) {
           results.species_1CountSummary = o.species_1CountSummary;
+          console.log("results.species_1CountSummary", results.species_1CountSummary)
         }
 
         if (o.species_2CountSummary !== undefined) {
           results.species_2CountSummary = o.species_2CountSummary;
+          console.log("results.species_2CountSummary", results.species_2CountSummary)
         }
 
         if (o.epochLastDetectionSummary !== undefined) {
@@ -227,14 +229,17 @@ function Dashboard() {
 
         if (o.sdcardSpaceRemaining !== undefined) {
           results.sdcardSpaceRemaining = o.sdcardSpaceRemaining;
+          console.log("results.sdcardSpaceRemaining", results.sdcardSpaceRemaining)
         }
 
         if (o.radioRssiEst !== undefined) {
           results.radioRssiEst = o.radioRssiEst;
+          console.log("results.radioRssiEst", results.radioRssiEst)
         }
 
         if (o.radioSnr !== undefined) { 
           results.radioSnr = o.radioSnr;
+          console.log("results.radioSnr", results.radioSnr)
         }
 
         if (o.msFromStart !== undefined) {
@@ -270,6 +275,7 @@ function Dashboard() {
 
       if (results.species_2CountInterval !== undefined) {
         setSpecies_2CountInterval(results.species_2CountInterval);
+        console.log("setSpecies_2CountInterval, species_2CountInterval", species_2CountInterval)
       }
 
       if (results.epochLastDetectionInterval !== undefined) {
@@ -286,11 +292,13 @@ function Dashboard() {
       }
 
       if (results.species_1CountSummary !== undefined) {
-        species_1CountSummary(results.species_1CountSummary);
+        setSpecies_1CountSummary(results.species_1CountSummary);
+        console.log("setSpecies_1CountSummary, species_1CountSummary", species_1CountSummary)
       }
 
       if (results.species2CountSummary !== undefined) {
         setSpecies_2CountSummary(results.species_2CountSummary);
+        console.log("setSpecies_2CountSummary, species_2CountSummary", species_2CountSummary)
       }
 
       if (results.epochLastDetectionSummary !== undefined) {
@@ -300,14 +308,17 @@ function Dashboard() {
 
       if (results.sdcardSpaceRemaining !== undefined) {
         setSdcardSpaceRemaining(results.sdcardSpaceRemaining);
+        console.log("setSdcardSpaceRemaining", sdcardSpaceRemaining)
       }
 
       if (results.radioRssiEst !== undefined) { 
         setRadioRssiEst(results.radioRssiEst);
+        console.log("setRadioRssiEst", radioRssiEst)
       }
 
       if (results.radioSnr !== undefined) { 
         setRadioSnr(results.radioSnr);
+        console.log("setRadioSnr", radioSnr)
       }
 
       if (results.msFromStart !== undefined) {
