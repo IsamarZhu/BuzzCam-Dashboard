@@ -137,14 +137,14 @@ function Dashboard() {
   const [classifierVersion, setClassifierVersion] = useState("N/A");
 
   const [buzzCountInterval, setBuzzCountInterval] = useState("N/A");
-  const [species1CountInterval, setSpecies1CountInterval] = useState("N/A");  
-  const [species2CountInterval, setSpecies2CountInterval] = useState("N/A");
+  const [species_1CountInterval, setSpecies_1CountInterval] = useState("N/A");  
+  const [species_2CountInterval, setSpecies_2CountInterval] = useState("N/A");
   const [epochLastDetectionInterval, setEpochLastDetectionInterval] = useState("N/A");
   const [transmissionIntervalM, setTransmissionIntervalM] = useState("N/A");
 
   const [buzzCountSummary, setBuzzCountSummary] = useState("N/A");
-  const [species1CountSummary, setSpecies1CountSummary] = useState("N/A");
-  const [species2CountSummary, setSpecies2CountSummary] = useState("N/A");
+  const [species_1CountSummary, setSpecies_1CountSummary] = useState("N/A");
+  const [species_2CountSummary, setSpecies_2CountSummary] = useState("N/A");
   const [epochLastDetectionSummary, setEpochLastDetectionSummary] = useState("N/A");
 
   const [rssiEst, setRssiEst] = useState("N/A");
@@ -192,12 +192,12 @@ function Dashboard() {
           results.buzzCountInterval = o.buzzCountInterval;
         }
 
-        if (o.species1CountInterval !== undefined) {
-          results.species1CountInterval = o.species1CountInterval;
+        if (o.species_1CountInterval !== undefined) { 
+          results.species_1CountInterval = o.species_1CountInterval;
         }
 
-        if (o.species2CountInterval !== undefined) {
-          results.species2CountInterval = o.species2CountInterval;
+        if (o.species_2CountInterval !== undefined) {
+          results.species_2CountInterval = o.species_2CountInterval;
         }
         
         if (o.epochLastDetectionInterval !== undefined) {
@@ -213,12 +213,12 @@ function Dashboard() {
           results.buzzCountSummary = o.buzzCountSummary;
         }
 
-        if (o.species1CountSummary !== undefined) {
-          results.species1CountSummary = o.species1CountSummary;
+        if (o.species_1CountSummary !== undefined) {
+          results.species_1CountSummary = o.species_1CountSummary;
         }
 
-        if (o.species2CountSummary !== undefined) {
-          results.species2CountSummary = o.species2CountSummary;
+        if (o.species_2CountSummary !== undefined) {
+          results.species_2CountSummary = o.species_2CountSummary;
         }
 
         if (o.epochLastDetectionSummary !== undefined) {
@@ -264,12 +264,12 @@ function Dashboard() {
         setBuzzCountInterval(results.buzzCountInterval);
       }
 
-      if (results.species1CountInterval !== undefined) {
-        setSpecies1CountInterval(results.species1CountInterval);
+      if (results.species_1CountInterval !== undefined) {
+        setSpecies_1CountInterval(results.species_1CountInterval);
       }
 
-      if (results.species2CountInterval !== undefined) {
-        setSpecies2CountInterval(results.species2CountInterval);
+      if (results.species_2CountInterval !== undefined) {
+        setSpecies_2CountInterval(results.species_2CountInterval);
       }
 
       if (results.epochLastDetectionInterval !== undefined) {
@@ -285,12 +285,12 @@ function Dashboard() {
         setBuzzCountSummary(results.buzzCountSummary);
       }
 
-      if (results.species1CountSummary !== undefined) {
-        setSpecies1CountSummary(results.species1CountSummary);
+      if (results.species_1CountSummary !== undefined) {
+        species_1CountSummary(results.species_1CountSummary);
       }
 
       if (results.species2CountSummary !== undefined) {
-        setSpecies2CountSummary(results.species2CountSummary);
+        setSpecies_2CountSummary(results.species_2CountSummary);
       }
 
       if (results.epochLastDetectionSummary !== undefined) {
@@ -613,11 +613,11 @@ function Dashboard() {
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
-                      <strong>Species 1 Count:</strong> {species1CountInterval ?? '0'}
+                      <strong>Species 1 Count:</strong> {species_1CountInterval ?? '0'}
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
-                      <strong>Species 2 Count:</strong> {species2CountInterval ?? '0'}
+                      <strong>Species 2 Count:</strong> {species_2CountInterval ?? '0'}
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
@@ -641,11 +641,11 @@ function Dashboard() {
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
-                      <strong>Species 1 Count:</strong> {species1CountSummary ?? '0'}
+                      <strong>Species 1 Count:</strong> {species_1CountSummary ?? '0'}
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">
-                      <strong>Species 2 Count:</strong> {species2CountSummary ?? '0'}
+                      <strong>Species 2 Count:</strong> {species_2CountSummary ?? '0'}
                   </VuiTypography>
 
                   <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px" display="block">

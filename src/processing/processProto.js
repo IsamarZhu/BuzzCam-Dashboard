@@ -80,9 +80,10 @@ function initProcessProto(mainWindow, filePath) {
         }
 
         buffer = Buffer.alloc(0); // Clear the buffer after processing
-      } else {
-        console.log('No data received within timeout.');
-      }
+      } 
+      // else {
+      //   console.log('No data received within timeout.');
+      // }
 
       readUntilTimeout(); // Schedule the next read
     }, timeoutMs);
