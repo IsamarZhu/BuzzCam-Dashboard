@@ -432,10 +432,10 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 <strong>Buzz Count:</strong> {selectedPacket?.systemSummaryPacket?.buzzIntervalData.buzzCount.low ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Latitude:</strong> {selectedPacket?.systemSummaryPacket?.location?.lat ?? 'N/A'}
+                                <strong>Latitude:</strong> {selectedPacket?.systemSummaryPacket?.location?.lat / 10000000 ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
-                                <strong>Longitude:</strong> {selectedPacket?.systemSummaryPacket?.location?.lon ?? 'N/A'}
+                                <strong>Longitude:</strong> {selectedPacket?.systemSummaryPacket?.location?.lon / 10000000 ?? 'N/A'}
                             </VuiTypography>
                             <VuiTypography color="white" variant="body2" fontWeight="regular" mb="12px">
                                 <strong>Elevation:</strong> {selectedPacket?.systemSummaryPacket?.location?.elev ?? 'N/A'}

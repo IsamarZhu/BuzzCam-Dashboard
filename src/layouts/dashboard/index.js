@@ -147,8 +147,8 @@ function Dashboard() {
   const [species_2CountSummary, setSpecies_2CountSummary] = useState("N/A");
   const [epochLastDetectionSummary, setEpochLastDetectionSummary] = useState("N/A");
 
-  const [rssiEst, setRssiEst] = useState("N/A");
-  const [snr, setSnr] = useState("N/A");
+  const [radioRssiEst, setRadioRssiEst] = useState("N/A");
+  const [radioSnr, setRadioSnr] = useState("N/A");
 
   const [sdcardSpaceRemaining, setSdcardSpaceRemaining] = useState("N/A");
   const [sdcardTotalSpace, setSdcardTotalSpace] = useState("N/A");
@@ -229,12 +229,12 @@ function Dashboard() {
           results.sdcardSpaceRemaining = o.sdcardSpaceRemaining;
         }
 
-        if (o.rssiEst !== undefined) {
-          results.rssiEst = o.rssiEst;
+        if (o.radioRssiEst !== undefined) {
+          results.radioRssiEst = o.radioRssiEst;
         }
 
-        if (o.snr !== undefined) { 
-          results.snr = o.snr;
+        if (o.radioSnr !== undefined) { 
+          results.radioSnr = o.radioSnr;
         }
 
         if (o.msFromStart !== undefined) {
@@ -302,12 +302,12 @@ function Dashboard() {
         setSdcardSpaceRemaining(results.sdcardSpaceRemaining);
       }
 
-      if (results.rssiEst !== undefined) { 
-        setRssiEst(results.rssiEst);
+      if (results.radioRssiEst !== undefined) { 
+        setRadioRssiEst(results.radioRssiEst);
       }
 
-      if (results.snr !== undefined) { 
-        setSnr(results.snr);
+      if (results.radioSnr !== undefined) { 
+        setRadioSnr(results.radioSnr);
       }
 
       if (results.msFromStart !== undefined) {
@@ -524,7 +524,7 @@ function Dashboard() {
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Radio RSSI Estimate", fontWeight: "regular" }}
-                        count={rssiEst ? parseFloat(rssiEst) : "N/A"}
+                        count={radioRssiEst ? parseFloat(radioRssiEst) : "N/A"}
                         icon={{ color: "info", component: <LuRadioReceiver size="20px" color="white" /> }}
                       />
                     </VuiBox>
@@ -532,7 +532,7 @@ function Dashboard() {
                     <VuiBox mb={1} sx={{ width: '100%' }}>
                       <MiniStatisticsCard
                         title={{ text: "Radio SNR", fontWeight: "regular" }}
-                        count={snr ? parseFloat(snr) : "N/A"}
+                        count={radioSnr ? parseFloat(radioSnr) : "N/A"}
                         icon={{ color: "info", component: <MdSignalCellularAlt size="20px" color="white" /> }}
                       />
                     </VuiBox>
