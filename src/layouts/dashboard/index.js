@@ -296,7 +296,7 @@ function Dashboard() {
         console.log("setSpecies_1CountSummary, species_1CountSummary", species_1CountSummary)
       }
 
-      if (results.species2CountSummary !== undefined) {
+      if (results.species_2CountSummary !== undefined) {
         setSpecies_2CountSummary(results.species_2CountSummary);
         console.log("setSpecies_2CountSummary, species_2CountSummary", species_2CountSummary)
       }
