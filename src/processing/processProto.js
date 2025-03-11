@@ -44,7 +44,8 @@ function initProcessProto(mainWindow, filePath) {
     portPath = '/dev/ttyACM0'; // Adjust for macOS/Linux
   }
   else {
-    portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
+    // portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
+    portPath = '/dev/tty.usbserial-56470099691';
   } // TODO make serial port general?
 
   console.log('Serial Port Path:', portPath);
