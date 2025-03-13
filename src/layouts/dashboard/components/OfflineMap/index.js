@@ -258,17 +258,17 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
       }, [packets]);
       
 
-    useEffect(() => {
-        if (map) {
-            const tileLayerOffline = L.tileLayer.offline(
-                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    subdomains: ["a", "b", "c"],
-                }
-            ).addTo(map);
-        }
-    }, [map]);
+    // useEffect(() => {
+    //     if (map) {
+    //         const tileLayerOffline = L.tileLayer.offline(
+    //             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    //             {
+    //                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //                 subdomains: ["a", "b", "c"],
+    //             }
+    //         ).addTo(map);
+    //     }
+    // }, [map]);
 
     const handleSelectChange = (event) => {
         setSelectedOption(event.target.value);
@@ -303,13 +303,16 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
     };
 
     const updateMarkers = () => {
+        console.log("updating markers", markersRef)
         // Clear previous markers
-        markersRef.current.forEach(marker => {
-            if (map) {
-                map.removeLayer(marker);
-            }
-        });
-        markersRef.current.clear();
+        // markersRef.current.forEach(marker => {
+        //     console.log("iterating through current markers")
+        //     if (map) {
+        //         console.log("removing marker, ", marker);
+        //         map.removeLayer(marker);
+        //     }
+        // });
+        // markersRef.current.clear();
 
         {packets && (() => {
             const markers = [];
@@ -336,17 +339,54 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                     const lat = packet.systemSummaryPacket.location.lat / 10000000;
                     const lon = packet.systemSummaryPacket.location.lon / 10000000;
 
-                    // Larger marker with valid opacity
-                    if (!isNaN(getOpacity(packet))) {
-                        const largeMarker = (
+                    // only add another marker if the uid is not already in the map or the lat/lon is different
+                    if (!markersRef.current.has(`${uid}-small`) || markersRef.current.get(`${uid}-small`).props.center[0] !== lat || markersRef.current.get(`${uid}-small`).props.center[1] !== lon) {
+                        console.log("adding new marker, ", `${uid}-small`)
+                        // remove previous marker if it exists
+                        if (markersRef.current.has(`${uid}-small`)) {
+                            // deleting old marker
+                            console.log("deleting old marker, ", `${uid}-small`)
+                            map.removeLayer(markersRef.current.get(`${uid}-small`));
+                            map.removeLayer(markersRef.current.get(`${uid}-large`));
+                        }
+
+                        // Larger marker with valid opacity
+                        if (!isNaN(getOpacity(packet))) {
+                            const largeMarker = (
+                                <CircleMarker
+                                    key={`${renderTrigger}-${uid}-large`} // Use renderTrigger and UID to force re-render
+                                    center={[lat, lon]}
+                                    radius={40}
+                                    weight={1}
+                                    opacity={getOpacity(packet)}
+                                    fillOpacity={getOpacity(packet)}
+                                    color="#f1a307"
+                                    eventHandlers={{
+                                        click: () => {
+                                            setSelectedPacket(packet);
+                                        }
+                                    }}
+                                >
+                                    <Popup>
+                                        <div>
+                                            <p><strong>UID:</strong> {packet.header.systemUid}</p>
+                                            <p><strong>Buzz count:</strong> {getBuzzCount(packet)}</p>
+                                        </div>
+                                    </Popup>
+                                </CircleMarker>
+                            );
+                            markersRef.current.set(`${uid}-large`, largeMarker);
+                        }
+
+                        // Smaller marker to indicate device location
+                        const smallMarker = (
                             <CircleMarker
-                                key={`${renderTrigger}-${uid}-large`} // Use renderTrigger and UID to force re-render
+                                key={`${renderTrigger}-${uid}-small`} // Use renderTrigger and UID to force re-render
                                 center={[lat, lon]}
-                                radius={40}
+                                radius={5} // Set a visible radius
                                 weight={1}
-                                opacity={getOpacity(packet)}
-                                fillOpacity={getOpacity(packet)}
-                                color="#f1a307"
+                                opacity={1}
+                                color="#df6100"
                                 eventHandlers={{
                                     click: () => {
                                         setSelectedPacket(packet);
@@ -361,33 +401,11 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                                 </Popup>
                             </CircleMarker>
                         );
-                        markersRef.current.push(largeMarker);
+                        markersRef.current.set(`${uid}-small`, smallMarker);
+
                     }
 
-                    // Smaller marker to indicate device location
-                    const smallMarker = (
-                        <CircleMarker
-                            key={`${renderTrigger}-${uid}-small`} // Use renderTrigger and UID to force re-render
-                            center={[lat, lon]}
-                            radius={5} // Set a visible radius
-                            weight={1}
-                            opacity={1}
-                            color="#df6100"
-                            eventHandlers={{
-                                click: () => {
-                                    setSelectedPacket(packet);
-                                }
-                            }}
-                        >
-                            <Popup>
-                                <div>
-                                    <p><strong>UID:</strong> {packet.header.systemUid}</p>
-                                    <p><strong>Buzz count:</strong> {getBuzzCount(packet)}</p>
-                                </div>
-                            </Popup>
-                        </CircleMarker>
-                    );
-                    markersRef.current.push(smallMarker);
+                    
                 }
             
             }
@@ -410,12 +428,13 @@ const OfflineMap = ({ lastPackets = [], maxBuzzCount, minBuzzCount, maxSpecies1C
                     zoom={13}
                     whenCreated={setMap}
                     style={{ height: "500px", width: "100%" }}
+                    ref={setMap}
                 >
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
-                    {markersRef.current}
+                    {Array.from(markersRef.current.values())}
                 </MapContainer>
                 <VuiBox
                     sx={{
