@@ -4,8 +4,8 @@ import { Card, Icon } from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 
-import gif from "assets/images/cardimgfree.png";
-import wilddog from "assets/images/wilddog_welcome_card.jpg";
+// import gif from "assets/images/cardimgfree.png";
+// import wilddog from "assets/images/wilddog_welcome_card.jpg";
 import buzzcam_welcome_card from "assets/images/buzzcam_welcome_card.jpg";
 
 

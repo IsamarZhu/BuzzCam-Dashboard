@@ -35,7 +35,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiButton from "components/VuiButton";
-import VuiSwitch from "components/VuiSwitch";
+// import VuiSwitch from "components/VuiSwitch";
 
 // Custom styles for the Configurator
 import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
@@ -211,7 +211,7 @@ function Configurator() {
           </VuiTypography>
 
           {/* <Switch checked={fixedNavbar} onChange={handleFixedNavbar} color="info" /> */}
-          <VuiSwitch checked={fixedNavbar} onChange={handleFixedNavbar} color="info" />
+          {/* <VuiSwitch checked={fixedNavbar} onChange={handleFixedNavbar} color="info" /> */}
         </VuiBox>
 
         <Divider light />

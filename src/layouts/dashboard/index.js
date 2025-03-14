@@ -18,21 +18,19 @@
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-import { TextField } from '@mui/material';
 
-import Icon from "@mui/material/Icon";
 import { Card, LinearProgress, Stack, Select, MenuItem } from "@mui/material";
 
 // Vision UI Dashboard React components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
-import VuiProgress from "components/VuiProgress";
+// import VuiProgress from "components/VuiProgress";
 import VuiInput from "components/VuiInput";
 
 
 // Vision UI Dashboard React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+// import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCard";
 import linearGradient from "assets/theme/functions/linearGradient";
@@ -43,28 +41,16 @@ import colors from "assets/theme/base/colors";
 
 // Dashboard layout components
 import WelcomeMark from "layouts/dashboard/components/WelcomeMark";
-import Projects from "layouts/dashboard/components/Projects";
-import OrderOverview from "layouts/dashboard/components/OrderOverview";
+// import Projects from "layouts/dashboard/components/Projects";
+// import OrderOverview from "layouts/dashboard/components/OrderOverview";
 import SatisfactionRate from "layouts/dashboard/components/SatisfactionRate";
-import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
+// import ReferralTracking from "layouts/dashboard/components/ReferralTracking";
 
 // React icons
-import { IoIosRocket } from "react-icons/io";
-import { IoGlobe } from "react-icons/io5";
-import { IoBuild } from "react-icons/io5";
-import { IoWallet } from "react-icons/io5";
-import { IoDocumentText } from "react-icons/io5";
-import { FaShoppingCart } from "react-icons/fa";
 import { FaTemperatureHalf } from "react-icons/fa6";
-import { IoSpeedometerSharp } from "react-icons/io5";
 import { PiWindBold } from "react-icons/pi";
 import { GiSparkles } from "react-icons/gi";
-import { MdBrightnessMedium } from "react-icons/md";
-import { TbArrowsMove } from "react-icons/tb";
-import { IoPaw } from "react-icons/io5";
 import { RiWaterPercentFill } from "react-icons/ri";
-import { MdOutlineAccessTimeFilled } from "react-icons/md";
-import { MdOutlineRadar } from "react-icons/md";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FiBatteryCharging } from "react-icons/fi";
 import { MdSignalCellularAlt } from "react-icons/md";
@@ -73,44 +59,38 @@ import { LuRadioReceiver } from "react-icons/lu";
 
 
 // Data
-import LineChart from "examples/Charts/LineCharts/LineChart";
-import BarChart from "examples/Charts/BarCharts/BarChart";
-import HeatMap from "examples/Charts/HeatMaps/HeatMap";
+// import LineChart from "examples/Charts/LineCharts/LineChart";
+// import BarChart from "examples/Charts/BarCharts/BarChart";
+// import HeatMap from "examples/Charts/HeatMaps/HeatMap";
 
-import { lineChartDataDashboard } from "layouts/dashboard/data/lineChartData";
-import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptions";
-import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
-import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
-import { heatMapDataDashboard } from "layouts/dashboard/data/heatMapData";
-import { heatMapOptionsDashboard } from "layouts/dashboard/data/heatMapOptions";
+// import { lineChartDataDashboard } from "layouts/dashboard/data/lineChartData";
+// import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptions";
+// import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
+// import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
+// import { heatMapDataDashboard } from "layouts/dashboard/data/heatMapData";
+// import { heatMapOptionsDashboard } from "layouts/dashboard/data/heatMapOptions";
 
 
 
 // const { ipcRenderer } = window.require('electron');
 import { useEffect, useMemo, useState, useRef } from "react";
-import LastFivePackets from "./components/LastFivePackets";
+// import LastFivePackets from "./components/LastFivePackets";
 import OfflineMap from "./components/OfflineMap";
 
-
-function getNumFromLong(longObj) {
-  
-  const low = BigInt.asUintN(32, BigInt(longObj.low));
-  const high = BigInt.asUintN(32, BigInt(longObj.high));
-  var combined = (high << 32n) | low;
-  var combinedBigInt = BigInt.asUintN(64, combined);
-  console.log("combinedBigInt ", combinedBigInt)
-  return combinedBigInt;
-
-}
 
 
 const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
-const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
+// const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
-const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
-const queryApi = influxDB.getQueryApi('915a1d8148ba09aa');
+// const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
+// const queryApi = influxDB.getQueryApi('915a1d8148ba09aa');
+
+const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+
+const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
+const queryApi = influxDB.getQueryApi('80718fbb557b61b0');
 
 
 function Dashboard() {
@@ -161,7 +141,7 @@ function Dashboard() {
 
   const getQuery = async () => {
     const fluxQuery = `
-      from(bucket: "patagonia")
+      from(bucket: "buzzcam_test")
         |> range(start: -24h)
         |> filter(fn: (r) => r._measurement == "system_summary")
         |> filter(fn: (r) => r.systemUid == "${selectedUID}")
@@ -397,6 +377,7 @@ function Dashboard() {
           console.log("currentUID === selectedUID")
 
           await getQuery();
+          console.log("Querying InfluxDB")
         }
 
         console.log("packet.systemSummaryPacket.location.lat",packet.systemSummaryPacket.location.lat)
