@@ -82,15 +82,17 @@ import OfflineMap from "./components/OfflineMap";
 const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
-// const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
+const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
-// const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
-// const queryApi = influxDB.getQueryApi('915a1d8148ba09aa');
+const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
+const queryApi = influxDB.getQueryApi('915a1d8148ba09aa');
 
-const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
 
-const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
-const queryApi = influxDB.getQueryApi('80718fbb557b61b0');
+// TEST BUCKET
+// const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+
+// const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
+// const queryApi = influxDB.getQueryApi('80718fbb557b61b0');
 
 
 function Dashboard() {
@@ -141,7 +143,7 @@ function Dashboard() {
 
   const getQuery = async () => {
     const fluxQuery = `
-      from(bucket: "buzzcam_test")
+      from(bucket: "patagonia")
         |> range(start: -24h)
         |> filter(fn: (r) => r._measurement == "system_summary")
         |> filter(fn: (r) => r.systemUid == "${selectedUID}")

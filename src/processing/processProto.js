@@ -26,22 +26,23 @@ const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
 const host = process.env.INFLUX_HOST
 // const token = process.env.INFLUX_TOKEN
-// const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
+const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
-// const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
-// const writeApi = influxDB.getWriteApi('915a1d8148ba09aa', 'patagonia');
-// writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method
+const influxDB = new InfluxDB({ url: 'https://cwrcg87oxx-fcwnpwwurvjrx2.timestream-influxdb.us-east-2.on.aws:8086', token: token });
+const writeApi = influxDB.getWriteApi('915a1d8148ba09aa', 'patagonia');
+writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method
 
 
 // test bucket
 
 // const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
 
+// TEST BUCKET
 // const token = "1bkG2GLih-gV2kf5sXsGj7NWm7xY5KsRKI8UHwsRLb_Z740htB4oKJK1TPzgO0ZSUHEQUxarMjQECPMfGdVbJQ=="
-const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
-const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
-const writeApi = influxDB.getWriteApi('80718fbb557b61b0', 'buzzcam_test');
-writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method // To apply one or more tags to all points, use the useDefaultTags() method
+// const token = "aCVb85vzJw7oxOS1SQbX13ZPC3z7vuUl5Ba1dbPWg_Tc2E1DEnURAHPLIV6Kp7g1YYLxU-clxLtKK994xtU7Kw=="
+// const influxDB = new InfluxDB({ url: 'https://us-east-1-1.aws.cloud2.influxdata.com', token: token });
+// const writeApi = influxDB.getWriteApi('80718fbb557b61b0', 'buzzcam_test');
+// writeApi.useDefaultTags({region: 'west'}) // To apply one or more tags to all points, use the useDefaultTags() method // To apply one or more tags to all points, use the useDefaultTags() method
 
 // // Function to initialize the serial port
 function initProcessProto(mainWindow, filePath) {
@@ -54,8 +55,8 @@ function initProcessProto(mainWindow, filePath) {
     portPath = '/dev/ttyACM0'; // Adjust for macOS/Linux
   }
   else {
-    // portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
-    portPath = '/dev/tty.usbserial-56470099691'; // port for testing
+    portPath = '/dev/cu.usbmodem12341'; // Adjust for macOS/Linux
+    // portPath = '/dev/tty.usbserial-56470099691'; // port for testing
   } // TODO make serial port general?
 
   console.log('Serial Port Path:', portPath);
